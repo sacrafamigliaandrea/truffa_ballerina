@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulatore — Riconosci la Truffa</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   ROOT & RESET
+   ═══════════════════════════════════════ */
+:root {
+  --bg:#0c1220;
+  --bg-panel:#141e30;
+  --text:#e8edf5;
+  --muted:#7a8ba3;
+  --accent:#f0a030;
+  --danger:#e04050;
+  --success:#2ec87a;
+  --font:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+  /* iPhone internals */
+  --wa-green:#075e54;
+  --wa-header:#1f2c34;
+  --wa-bg:#0b141a;
+  --wa-bubble-in:#1f2c34;
+  --wa-time:rgba(255,255,255,0.45);
+  --wa-light-green:#25d366;
+  --ios-bg:#000;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;overflow-x:hidden;
+}
+
+/* ═══════════════════════════════════════
+   LAYOUT: LEFT PANEL + IPHONE
+   ═══════════════════════════════════════ */
+.app-layout{
+  display:flex;gap:40px;align-items:center;justify-content:center;
+  max-width:1100px;width:100%;flex-wrap:wrap;
+}
+.info-panel{
+  flex:1;min-width:280px;max-width:420px;
+}
+.phone-area{
+  flex-shrink:0;
+}
+
+/* ═══════════════════════════════════════
+   INFO PANEL
+   ═══════════════════════════════════════ */
+.panel-badge{
+  display:inline-block;padding:5px 14px;border-radius:20px;
+  background:rgba(240,160,48,0.1);border:1px solid rgba(240,160,48,0.2);
+  font-size:0.72rem;font-weight:600;color:var(--accent);
+  letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;
+}
+.panel-title{
+  font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;line-height:1.12;margin-bottom:12px;
+}
+.panel-sub{
+  font-size:0.92rem;color:var(--muted);line-height:1.65;margin-bottom:28px;
+}
+.panel-key{
+  padding:16px 20px;border-radius:10px;margin-bottom:20px;
+  background:rgba(224,64,80,0.06);border:1px solid rgba(224,64,80,0.15);
+}
+.panel-key p{font-size:0.85rem;line-height:1.6;color:var(--text);}
+.panel-key strong{color:var(--danger);}
+
+/* Score strip */
+.score-strip{
+  display:flex;gap:12px;margin-bottom:20px;
+}
+.score-box{
+  flex:1;text-align:center;padding:14px 8px;border-radius:10px;
+  background:var(--bg-panel);border:1px solid rgba(255,255,255,0.05);
+}
+.score-box .sv{font-family:var(--mono);font-size:1.6rem;font-weight:700;}
+.score-box .sl{font-size:0.7rem;color:var(--muted);margin-top:2px;}
+.score-box.s-ok .sv{color:var(--success);}
+.score-box.s-ko .sv{color:var(--danger);}
+.score-box.s-left .sv{color:var(--accent);}
+
+/* Scenario feedback outside phone */
+.ext-feedback{
+  padding:20px;border-radius:12px;margin-top:20px;
+  display:none;animation:fadeUp .4s ease;
+}
+.ext-feedback.show{display:block;}
+.ext-feedback h4{font-size:0.95rem;margin-bottom:6px;}
+.ext-feedback p{font-size:0.85rem;line-height:1.6;color:var(--muted);}
+.ext-feedback.fb-ok{background:rgba(46,200,122,0.07);border:1px solid rgba(46,200,122,0.2);}
+.ext-feedback.fb-ok h4{color:var(--success);}
+.ext-feedback.fb-ko{background:rgba(224,64,80,0.07);border:1px solid rgba(224,64,80,0.2);}
+.ext-feedback.fb-ko h4{color:var(--danger);}
+.ext-feedback .fb-tag{
+  display:inline-block;padding:3px 10px;border-radius:6px;
+  font-size:0.7rem;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;
+}
+.fb-ok .fb-tag{background:rgba(46,200,122,0.15);color:var(--success);}
+.fb-ko .fb-tag{background:rgba(224,64,80,0.15);color:var(--danger);}
+
+/* Final screen */
+.final-panel{display:none;}
+.final-panel.show{display:block;}
+.final-score{font-size:3rem;font-weight:700;margin:8px 0;}
+.final-msg{font-size:0.95rem;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+.btn-restart{
+  padding:12px 28px;border:none;border-radius:10px;cursor:pointer;
+  font-family:var(--font);font-weight:600;font-size:0.9rem;
+  background:var(--accent);color:var(--bg);transition:all .2s;
+}
+.btn-restart:hover{filter:brightness(1.15);transform:translateY(-2px);}
+
+/* ═══════════════════════════════════════
+   iPHONE FRAME
+   ═══════════════════════════════════════ */
+.iphone{
+  width:310px;height:640px;
+  background:var(--ios-bg);
+  border-radius:44px;
+  border:3px solid #2a2a2e;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 20px 60px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+/* Dynamic Island */
+.dynamic-island{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:100px;height:28px;background:#000;border-radius:20px;
+  z-index:100;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.05);
+}
+/* Status bar */
+.status-bar{
+  height:54px;padding:14px 24px 0;display:flex;justify-content:space-between;
+  align-items:flex-start;font-size:0.7rem;font-weight:600;color:#fff;
+  position:relative;z-index:50;flex-shrink:0;
+  background:var(--wa-header);
+}
+.sb-time{margin-top:1px;}
+.sb-icons{display:flex;gap:5px;align-items:center;margin-top:1px;}
+.sb-icons svg{width:14px;height:14px;fill:#fff;}
+/* Home indicator */
+.home-indicator{
+  height:24px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;background:var(--wa-bg);
+}
+.home-indicator-bar{
+  width:120px;height:4px;background:rgba(255,255,255,0.25);border-radius:3px;
+}
+
+/* ═══════════════════════════════════════
+   SCREENS INSIDE iPHONE
+   ═══════════════════════════════════════ */
+.screen{
+  flex:1;display:none;flex-direction:column;overflow:hidden;
+}
+.screen.active{display:flex;}
+
+/* ─── CHAT LIST ─── */
+.wa-top-bar{
+  background:var(--wa-header);padding:6px 16px 10px;
+}
+.wa-top-title{
+  font-size:1.15rem;font-weight:700;color:#fff;
+}
+.wa-top-sub{
+  font-size:0.65rem;color:var(--wa-time);margin-top:1px;
+}
+.chat-list{
+  flex:1;overflow-y:auto;background:var(--wa-bg);
+}
+.chat-item{
+  display:flex;align-items:center;gap:12px;padding:12px 16px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  cursor:pointer;transition:background .15s;
+}
+.chat-item:hover{background:rgba(255,255,255,0.03);}
+.chat-item.done{opacity:0.45;pointer-events:none;}
+.chat-item.done .ci-badge{display:block;}
+.ci-avatar{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:0.85rem;color:#fff;
+}
+.ci-body{flex:1;min-width:0;}
+.ci-name{font-size:0.85rem;font-weight:600;color:#fff;}
+.ci-preview{
+  font-size:0.75rem;color:var(--wa-time);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin-top:1px;
+}
+.ci-meta{text-align:right;flex-shrink:0;}
+.ci-time{font-size:0.65rem;color:var(--wa-time);}
+.ci-unread{
+  width:18px;height:18px;border-radius:50%;
+  background:var(--wa-light-green);color:#fff;
+  font-size:0.6rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:4px;margin-left:auto;
+}
+.ci-badge{
+  display:none;margin-top:4px;font-size:0.55rem;font-weight:600;
+  padding:2px 6px;border-radius:4px;margin-left:auto;
+  text-transform:uppercase;letter-spacing:0.04em;
+}
+.chat-item.done-ok .ci-badge{background:rgba(46,200,122,0.2);color:var(--success);}
+.chat-item.done-ko .ci-badge{background:rgba(224,64,80,0.2);color:var(--danger);}
+
+/* ─── CHAT DETAIL ─── */
+.chat-header{
+  background:var(--wa-header);padding:8px 12px;
+  display:flex;align-items:center;gap:10px;
+}
+.ch-back{
+  width:28px;height:28px;border:none;background:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.ch-back svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.ch-avatar{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:0.75rem;color:#fff;
+}
+.ch-info .ch-name{font-size:0.85rem;font-weight:600;color:#fff;}
+.ch-info .ch-status{font-size:0.65rem;color:var(--wa-time);}
+
+.chat-messages{
+  flex:1;overflow-y:auto;background:var(--wa-bg);
+  padding:12px 10px;
+  /* WhatsApp-style subtle pattern */
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(37,211,102,0.015) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(37,211,102,0.01) 0%, transparent 50%);
+}
+.msg-bubble{
+  max-width:88%;padding:8px 10px;margin-bottom:6px;
+  border-radius:10px;font-size:0.78rem;line-height:1.5;
+  position:relative;word-wrap:break-word;
+  opacity:0;transform:translateY(8px);
+  animation:bubbleIn .35s ease forwards;
+}
+.msg-bubble:nth-child(1){animation-delay:.1s;}
+.msg-bubble:nth-child(2){animation-delay:.5s;}
+.msg-bubble:nth-child(3){animation-delay:.9s;}
+.msg-bubble:nth-child(4){animation-delay:1.3s;}
+.msg-bubble:nth-child(5){animation-delay:1.7s;}
+.msg-in{
+  background:var(--wa-bubble-in);border-radius:10px 10px 10px 3px;
+  align-self:flex-start;
+}
+.msg-time{
+  font-size:0.58rem;color:var(--wa-time);float:right;
+  margin-left:10px;margin-top:4px;
+}
+.msg-link{
+  color:#53bdeb;word-break:break-all;
+  text-decoration:none;pointer-events:none;
+}
+.msg-photo-placeholder{
+  width:100%;height:80px;border-radius:6px;margin-bottom:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.65rem;color:var(--wa-time);
+}
+
+/* Decision area inside phone */
+.chat-decision{
+  background:var(--wa-header);padding:10px 12px;
+  border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;flex-direction:column;gap:6px;flex-shrink:0;
+}
+.cd-label{
+  font-size:0.7rem;color:var(--wa-time);text-align:center;
+  letter-spacing:0.03em;
+}
+.cd-buttons{display:flex;gap:8px;}
+.cd-btn{
+  flex:1;padding:10px;border:none;border-radius:8px;
+  font-family:var(--font);font-size:0.78rem;font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.cd-btn-trust{background:rgba(46,200,122,0.15);color:var(--success);border:1px solid rgba(46,200,122,0.25);}
+.cd-btn-trust:hover{background:rgba(46,200,122,0.25);}
+.cd-btn-danger{background:rgba(224,64,80,0.15);color:var(--danger);border:1px solid rgba(224,64,80,0.25);}
+.cd-btn-danger:hover{background:rgba(224,64,80,0.25);}
+.cd-btn:disabled{opacity:0.3;pointer-events:none;}
+
+/* Phone-internal result flash */
+.chat-result{
+  padding:10px 12px;text-align:center;font-size:0.75rem;font-weight:600;
+  display:none;flex-shrink:0;
+}
+.chat-result.show{display:block;animation:fadeUp .3s ease;}
+.chat-result.cr-ok{background:rgba(46,200,122,0.12);color:var(--success);}
+.chat-result.cr-ko{background:rgba(224,64,80,0.12);color:var(--danger);}
+
+@keyframes bubbleIn{to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ═══════════════════════════════════════
+   INTRO SCREEN (inside phone)
+   ═══════════════════════════════════════ */
+.intro-screen{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;background:var(--wa-bg);
+}
+.intro-screen h2{font-size:1.1rem;margin-bottom:8px;color:#fff;}
+.intro-screen p{font-size:0.78rem;color:var(--wa-time);line-height:1.6;margin-bottom:20px;}
+.intro-start{
+  padding:12px 32px;border:none;border-radius:10px;
+  background:var(--wa-light-green);color:#fff;
+  font-family:var(--font);font-size:0.85rem;font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.intro-start:hover{filter:brightness(1.15);}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media(max-width:740px){
+  .app-layout{flex-direction:column-reverse;gap:24px;}
+  .info-panel{max-width:100%;min-width:0;order:2;}
+  .phone-area{order:1;}
+  body{padding:12px;}
+}
+
+/* scrollbar inside phone */
+.chat-list::-webkit-scrollbar,.chat-messages::-webkit-scrollbar{width:3px;}
+.chat-list::-webkit-scrollbar-thumb,.chat-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- ═══ LEFT PANEL ═══ -->
+  <div class="info-panel" id="infoPanel">
+    <div class="panel-badge">Simulatore Interattivo</div>
+    <h1 class="panel-title">Riconosci la<br>truffa?</h1>
+    <p class="panel-sub">Hai 8 messaggi WhatsApp da leggere. Arrivano tutti da contatti veri salvati in rubrica: amici, parenti, insegnanti. Ma alcuni di questi account sono stati hackerati. Riesci a capire quali?</p>
+
+    <div class="panel-key">
+      <p><strong>Attenzione:</strong> il numero del mittente e' reale. E' il vero telefono di qualcuno che conosci. Ma non e' detto che sia davvero quella persona a scrivere.</p>
+    </div>
+
+    <div class="score-strip">
+      <div class="score-box s-ok"><div class="sv" id="panelOk">0</div><div class="sl">Corrette</div></div>
+      <div class="score-box s-ko"><div class="sv" id="panelKo">0</div><div class="sl">Sbagliate</div></div>
+      <div class="score-box s-left"><div class="sv" id="panelLeft">8</div><div class="sl">Rimaste</div></div>
+    </div>
+
+    <div class="ext-feedback" id="extFeedback"></div>
+
+    <div class="final-panel" id="finalPanel">
+      <div style="text-align:center;">
+        <div class="final-score" id="finalScore"></div>
+        <div class="final-msg" id="finalMsg"></div>
+        <button class="btn-restart" onclick="fullReset()">Ricomincia da capo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ iPHONE ═══ -->
+  <div class="phone-area">
+    <div class="iphone">
+      <div class="dynamic-island"></div>
+
+      <!-- Status bar -->
+      <div class="status-bar">
+        <div class="sb-time" id="sbTime">10:32</div>
+        <div class="sb-icons">
+          <svg viewBox="0 0 18 12"><rect x="0" y="5" width="3" height="7" rx="0.5"/><rect x="4" y="3" width="3" height="9" rx="0.5"/><rect x="8" y="1" width="3" height="11" rx="0.5"/><rect x="12" y="0" width="3" height="12" rx="0.5"/></svg>
+          <svg viewBox="0 0 16 12"><path d="M1 8.5C3.5 4 6.5 1.5 8 1.5S12.5 4 15 8.5" stroke="#fff" stroke-width="1.5" fill="none"/><circle cx="8" cy="10" r="1.5"/></svg>
+          <svg viewBox="0 0 25 12"><rect x="0" y="1" width="21" height="10" rx="2" stroke="#fff" stroke-width="1.2" fill="none"/><rect x="2" y="3" width="15" height="6" rx="1" fill="#fff"/><rect x="22" y="4" width="2.5" height="4" rx="0.8" fill="#fff" opacity="0.4"/></svg>
+        </div>
+      </div>
+
+      <!-- SCREEN: INTRO -->
+      <div class="screen active" id="screenIntro">
+        <div class="intro-screen">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--wa-light-green)" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4M12 16h.01"/></svg>
+          <h2 style="margin-top:16px;">8 messaggi da leggere</h2>
+          <p>Arrivano tutti da contatti della tua rubrica.<br>Decidi per ognuno: e' autentico o e' una trappola?</p>
+          <button class="intro-start" onclick="startSim()">Apri WhatsApp</button>
+        </div>
+      </div>
+
+      <!-- SCREEN: CHAT LIST -->
+      <div class="screen" id="screenList">
+        <div class="wa-top-bar">
+          <div class="wa-top-title">WhatsApp</div>
+          <div class="wa-top-sub">8 conversazioni</div>
+        </div>
+        <div class="chat-list" id="chatList"></div>
+      </div>
+
+      <!-- SCREEN: CHAT DETAIL -->
+      <div class="screen" id="screenChat">
+        <div class="chat-header" id="chatHeader"></div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-result" id="chatResult"></div>
+        <div class="chat-decision" id="chatDecision">
+          <div class="cd-label">Questo messaggio e' autentico o e' una trappola?</div>
+          <div class="cd-buttons">
+            <button class="cd-btn cd-btn-trust" id="btnTrust" onclick="answer(true)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px;"><path d="M20 6L9 17l-5-5"/></svg>
+              Mi fido
+            </button>
+            <button class="cd-btn cd-btn-danger" id="btnDanger" onclick="answer(false)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px;"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+              Trappola!
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-indicator">
+        <div class="home-indicator-bar"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   SCENARIO DATA
+   ═══════════════════════════════════════ */
+const SCENARIOS = [
+  {
+    id:'zia',
+    name:'Zia Maria',
+    initials:'ZM',
+    color:'#6c5ce7',
+    status:'online',
+    time:'10:32',
+    preview:'Ciao tesoro! Ti chiedo un favore...',
+    safe:false,
+    type:'Phishing: furto account',
+    messages:[
+      {text:'Ciao tesoro! Ti chiedo un favore veloce',time:'10:32'},
+      {text:'Puoi votare per Federica? E\' la figlia della mia amica Paola. Sta partecipando a un concorso di danza e con il tuo voto puo\' vincere una borsa di studio per un anno di corsi gratuiti!',time:'10:32'},
+      {text:'Non costa niente, basta un click qui:\nhttps://votaz10ne-danza.link/federica',time:'10:33',hasLink:true},
+      {text:'Grazie mille! Ci metti un secondo!',time:'10:33'},
+    ],
+    feedback:'Questa e\' la classica "truffa della ballerina". Zia Maria e\' stata hackerata: il truffatore usa il suo account per inviarti un link. Se clicchi e inserisci il codice a 6 cifre, perdi il tuo account WhatsApp. Segnali d\'allarme: link strano (votaz10ne con lo zero), richiesta di azione immediata, contenuto emotivo studiato per abbassare le difese.',
+    signals:['Link con dominio sospetto (votaz10ne-danza.link)','Richiesta di azione rapida ("ci metti un secondo")','Leva emotiva: bambina + borsa di studio + gratuito'],
+  },
+  {
+    id:'marco',
+    name:'Marco',
+    initials:'MC',
+    color:'#e17055',
+    status:'online',
+    time:'11:05',
+    preview:'Ma questa sei tu?? Guarda...',
+    safe:false,
+    type:'Phishing: curiosita\' + link malevolo',
+    messages:[
+      {text:'Ehi devi vedere questa cosa',time:'11:04'},
+      {text:'Ma questa sei tu nella foto?? Guarda qui\nhttps://ch3ck-foto.me/img29571',time:'11:05',hasLink:true},
+      {text:'Giuro che sembra proprio tu!! Troppo assurdo',time:'11:05'},
+    ],
+    feedback:'Variante basata sulla curiosita\'. "Sei tu in questa foto?" genera un impulso irresistibile a cliccare. Anche qui il link porta a una pagina che ruba le credenziali. Marco e\' stato hackerato e non sa che il suo account sta inviando questo messaggio a tutta la rubrica.',
+    signals:['Link con dominio sospetto (ch3ck-foto.me)','Leva sulla curiosita\' personale','Tre messaggi ravvicinati per creare urgenza'],
+  },
+  {
+    id:'mamma',
+    name:'Mamma',
+    initials:'MA',
+    color:'#fd79a8',
+    status:'online',
+    time:'12:20',
+    preview:'Mi e\' arrivato un codice per sbaglio...',
+    safe:false,
+    type:'Furto diretto del codice di verifica',
+    messages:[
+      {text:'Amore scusa',time:'12:19'},
+      {text:'Mi e\' arrivato per sbaglio un codice sul tuo numero. Me lo puoi rimandare? E\' di 6 cifre',time:'12:20'},
+      {text:'Mi serve subito per favore',time:'12:20'},
+    ],
+    feedback:'Questa e\' la forma piu\' diretta di furto. Nessun link, nessun sito: il truffatore ti chiede direttamente il codice a 6 cifre di WhatsApp. Se glielo mandi, perde il controllo del TUO account. Regola d\'oro: un codice di verifica non arriva MAI "per sbaglio" a un altro numero. Non si condivide MAI con nessuno.',
+    signals:['Richiesta esplicita di un codice a 6 cifre','Concetto di "errore" (arrivato per sbaglio) — impossibile tecnicamente','Urgenza: "mi serve subito"'],
+  },
+  {
+    id:'paolo',
+    name:'Paolo',
+    initials:'PA',
+    color:'#00b894',
+    status:'online',
+    time:'14:15',
+    preview:'Ho vinto 2 biglietti per il concerto!',
+    safe:false,
+    type:'Phishing: premio finto',
+    messages:[
+      {text:'INDOVINA??',time:'14:14'},
+      {text:'Ho vinto 2 biglietti per il concerto e uno e\' per te!! Devi solo registrarti qui per ritirare il tuo\nhttps://regalo-ticket.com/claim',time:'14:15',hasLink:true},
+      {text:'Fallo subito pero\' perche\' scade tra 1 ora!',time:'14:15'},
+    ],
+    feedback:'Schema classico del "premio inaspettato". Nessuno vince biglietti da regalare tramite link. La scadenza di 1 ora serve a impedirti di riflettere. L\'account di Paolo e\' compromesso e sta diffondendo la truffa.',
+    signals:['Premio non richiesto da "riscattare" via link','Scadenza a breve termine (1 ora) per impedire la riflessione','Dominio generico (regalo-ticket.com)'],
+  },
+  {
+    id:'cugino',
+    name:'Cugino Luca',
+    initials:'CL',
+    color:'#0984e3',
+    status:'online',
+    time:'16:45',
+    preview:'Emergenza, mi servono 200 euro...',
+    safe:false,
+    type:'Estorsione post-furto account',
+    messages:[
+      {text:'Ciao, sei li?',time:'16:44'},
+      {text:'Ho un\'emergenza grossa. Mi hanno rubato il portafoglio e devo pagare una cosa urgente',time:'16:44'},
+      {text:'Mi puoi mandare 200 euro? Ti ridai tutto domani giuro',time:'16:45'},
+      {text:'Ti mando l\'IBAN: IT04X0542811101000000123456',time:'16:45'},
+    ],
+    feedback:'Questa e\' la fase FINALE della truffa: dopo aver rubato l\'account di Luca, il truffatore scrive ai suoi contatti chiedendo soldi con una scusa urgente. IBAN, portafoglio rubato, "ti ridai domani" — tutto studiato per farti agire d\'impulso. Prima di inviare soldi a CHIUNQUE: CHIAMA con una telefonata vocale.',
+    signals:['Richiesta diretta di denaro','Scenario d\'emergenza per generare panico','IBAN fornito subito (preparato in anticipo)','Promessa di restituzione rapida'],
+  },
+  {
+    id:'coach',
+    name:'Coach Davide',
+    initials:'CD',
+    color:'#e84393',
+    status:'online',
+    time:'17:30',
+    preview:'Compila il modulo per la partita...',
+    safe:false,
+    type:'Phishing: urgenza + autorita\'',
+    messages:[
+      {text:'Ragazzi, sabato si gioca il torneo',time:'17:28'},
+      {text:'Dovete compilare questo modulo per l\'iscrizione altrimenti non potete giocare\nhttps://form-iscriz1one.site/torneo2026',time:'17:30',hasLink:true},
+      {text:'Fatelo ENTRO STASERA. Chi non compila non gioca',time:'17:30'},
+    ],
+    feedback:'Questa variante sfrutta l\'autorita\' (l\'allenatore) e la minaccia ("chi non compila non gioca"). Il dominio e\' sospetto: form-iscriz1one.site non e\' un indirizzo ufficiale. Un allenatore vero userebbe la piattaforma della societa\' sportiva o un modulo cartaceo, non un link sconosciuto via WhatsApp.',
+    signals:['Dominio sospetto con numero al posto di lettere (iscriz1one)','Minaccia/ultimatum per forzare l\'azione','Scadenza ravvicinata ("entro stasera")'],
+  },
+  {
+    id:'nonna',
+    name:'Nonna Rosa',
+    initials:'NR',
+    color:'#a29bfe',
+    status:'visto alle 15:40',
+    time:'15:40',
+    preview:'Come si manda una foto su...',
+    safe:true,
+    type:'Messaggio autentico',
+    messages:[
+      {text:'Ciao caro',time:'15:38'},
+      {text:'Come si fa a mandare una foto su WhatsApp? Non mi ricordo piu\' dove si tocca',time:'15:39'},
+      {text:'Quando vieni a trovarmi me lo fai vedere?',time:'15:40'},
+    ],
+    feedback:'Questo messaggio e\' autentico. Nonna Rosa chiede aiuto per una cosa semplice, non c\'e\' nessun link, nessuna richiesta di codici, nessuna urgenza artificiale. Il tono e\' coerente con il personaggio. Non tutti i messaggi sono trappole: il pensiero critico serve a distinguere, non a bloccare tutto.',
+    signals:['Nessun link','Nessuna richiesta di codici o dati','Domanda semplice coerente col personaggio','Nessuna urgenza artificiale'],
+  },
+  {
+    id:'prof',
+    name:'Prof.ssa Bianchi',
+    initials:'PB',
+    color:'#00cec9',
+    status:'visto alle 18:10',
+    time:'18:10',
+    preview:'Ricordatevi il libro di scienze...',
+    safe:true,
+    type:'Messaggio autentico',
+    messages:[
+      {text:'Buonasera ragazzi',time:'18:08'},
+      {text:'Vi ricordo di portare il libro di scienze domani, facciamo il laboratorio sulle cellule',time:'18:09'},
+      {text:'Chi ha il microscopio a casa lo porti. Buona serata!',time:'18:10'},
+    ],
+    feedback:'Anche questo e\' autentico. La professoressa ricorda di portare il libro e il microscopio: informazioni concrete, nessun link, nessuna richiesta strana. Il messaggio e\' perfettamente coerente con il contesto scolastico.',
+    signals:['Nessun link','Informazione pratica e verificabile','Tono coerente col ruolo','Nessuna richiesta di azioni sospette'],
+  },
+];
+
+/* ═══════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════ */
+let order=[];
+let answered={};
+let correct=0, wrong=0;
+let currentChat=null;
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ═══════════════════════════════════════
+   INIT & NAVIGATION
+   ═══════════════════════════════════════ */
+function startSim(){
+  order=shuffle([...Array(SCENARIOS.length).keys()]);
+  answered={};correct=0;wrong=0;currentChat=null;
+  updateScores();
+  buildChatList();
+  showScreen('screenList');
+  hideExtFeedback();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function buildChatList(){
+  const el=document.getElementById('chatList');
+  el.innerHTML='';
+  order.forEach(idx=>{
+    const s=SCENARIOS[idx];
+    const done=answered[s.id]!==undefined;
+    const wasCorrect=answered[s.id];
+    const item=document.createElement('div');
+    item.className='chat-item'+(done?' done':'')+(done?(wasCorrect?' done-ok':' done-ko'):'');
+    item.dataset.idx=idx;
+    item.innerHTML=`
+      <div class="ci-avatar" style="background:${s.color}">${s.initials}</div>
+      <div class="ci-body">
+        <div class="ci-name">${s.name}</div>
+        <div class="ci-preview">${s.preview}</div>
+      </div>
+      <div class="ci-meta">
+        <div class="ci-time">${s.time}</div>
+        ${done?`<div class="ci-badge">${wasCorrect?'OK':'ERR'}</div>`:`<div class="ci-unread">1</div>`}
+      </div>
+    `;
+    if(!done) item.onclick=()=>openChat(idx);
+    el.appendChild(item);
+  });
+}
+
+function openChat(idx){
+  currentChat=idx;
+  const s=SCENARIOS[idx];
+  hideExtFeedback();
+
+  // Header
+  const hdr=document.getElementById('chatHeader');
+  hdr.innerHTML=`
+    <button class="ch-back" onclick="closeChat()"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="ch-avatar" style="background:${s.color}">${s.initials}</div>
+    <div class="ch-info"><div class="ch-name">${s.name}</div><div class="ch-status">${s.status}</div></div>
+  `;
+
+  // Messages
+  const mc=document.getElementById('chatMessages');
+  mc.innerHTML='';
+  s.messages.forEach(m=>{
+    const b=document.createElement('div');
+    b.className='msg-bubble msg-in';
+    let content=m.text.replace(/\n/g,'<br>');
+    if(m.hasLink){
+      content=content.replace(/(https?:\/\/[^\s<]+)/g,'<span class="msg-link">$1</span>');
+    }
+    b.innerHTML=content+`<span class="msg-time">${m.time}</span>`;
+    mc.appendChild(b);
+  });
+
+  // Reset decision area
+  const dec=document.getElementById('chatDecision');
+  dec.style.display='flex';
+  document.getElementById('btnTrust').disabled=false;
+  document.getElementById('btnDanger').disabled=false;
+  const res=document.getElementById('chatResult');
+  res.className='chat-result';res.style.display='none';
+
+  showScreen('screenChat');
+}
+
+function closeChat(){
+  currentChat=null;
+  buildChatList();
+  showScreen('screenList');
+  checkEnd();
+}
+
+/* ═══════════════════════════════════════
+   ANSWER LOGIC
+   ═══════════════════════════════════════ */
+function answer(trustedByUser){
+  if(currentChat===null)return;
+  const s=SCENARIOS[currentChat];
+  const isSafe=s.safe;
+  const isCorrect=(trustedByUser===isSafe);
+
+  answered[s.id]=isCorrect;
+  if(isCorrect)correct++;else wrong++;
+  updateScores();
+
+  // Disable buttons
+  document.getElementById('btnTrust').disabled=true;
+  document.getElementById('btnDanger').disabled=true;
+
+  // Show result inside phone
+  const res=document.getElementById('chatResult');
+  res.className='chat-result show '+(isCorrect?'cr-ok':'cr-ko');
+  res.textContent=isCorrect
+    ?(isSafe?'Corretto: messaggio autentico':'Corretto: era una trappola!')
+    :(isSafe?'Sbagliato: era un messaggio autentico':'Sbagliato: era una trappola!');
+  res.style.display='block';
+
+  // Hide decision
+  document.getElementById('chatDecision').style.display='none';
+
+  // Show external feedback
+  showExtFeedback(s,isCorrect);
+
+  // Auto-close after delay
+  setTimeout(()=>{closeChat();},2800);
+}
+
+/* ═══════════════════════════════════════
+   FEEDBACK & SCORES
+   ═══════════════════════════════════════ */
+function showExtFeedback(s,ok){
+  const el=document.getElementById('extFeedback');
+  el.className='ext-feedback show '+(ok?'fb-ok':'fb-ko');
+
+  let signalsHtml='';
+  s.signals.forEach(sig=>{
+    signalsHtml+=`<span style="display:block;padding:2px 0;font-size:0.8rem;color:var(--text);">
+      <span style="color:${s.safe?'var(--success)':'var(--danger)'};">&bull;</span> ${sig}</span>`;
+  });
+
+  el.innerHTML=`
+    <div class="fb-tag">${s.type}</div>
+    <h4>${ok?'Hai riconosciuto il messaggio!':'Questa volta ti ha fregato.'}</h4>
+    <p>${s.feedback}</p>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:4px;font-weight:600;letter-spacing:0.04em;">SEGNALI ${s.safe?'DI AUTENTICITA\'':'D\'ALLARME'}</div>
+      ${signalsHtml}
+    </div>
+  `;
+}
+
+function hideExtFeedback(){
+  const el=document.getElementById('extFeedback');
+  el.className='ext-feedback';
+}
+
+function updateScores(){
+  document.getElementById('panelOk').textContent=correct;
+  document.getElementById('panelKo').textContent=wrong;
+  document.getElementById('panelLeft').textContent=SCENARIOS.length-correct-wrong;
+}
+
+function checkEnd(){
+  if(correct+wrong>=SCENARIOS.length){
+    setTimeout(showFinal,600);
+  }
+}
+
+function showFinal(){
+  const fp=document.getElementById('finalPanel');
+  fp.classList.add('show');
+  const pct=Math.round(correct/SCENARIOS.length*100);
+  document.getElementById('finalScore').textContent=correct+'/'+SCENARIOS.length;
+  document.getElementById('finalScore').style.color=
+    correct>=7?'var(--success)':correct>=5?'var(--accent)':'var(--danger)';
+
+  let msg='';
+  if(correct===8) msg='Perfetto! Nessun truffatore potrebbe fregarti. Hai un occhio clinico per i segnali d\'allarme.';
+  else if(correct>=6) msg='Ottimo fiuto! Qualche incertezza, ma conosci bene i meccanismi. Rivedi gli scenari dove hai sbagliato.';
+  else if(correct>=4) msg='Attenzione: hai un buon istinto ma alcune trappole ti hanno fregato. Ricorda la regola VCC: Verifica, Chiama, Controlla.';
+  else msg='Le trappole di ingegneria sociale sono insidiose. Rivedi ogni scenario con attenzione e ricorda: nel dubbio, CHIAMA sempre con una telefonata.';
+  document.getElementById('finalMsg').textContent=msg;
+}
+
+function fullReset(){
+  document.getElementById('finalPanel').classList.remove('show');
+  hideExtFeedback();
+  startSim();
+}
+
+/* ═══════════════════════════════════════
+   CLOCK
+   ═══════════════════════════════════════ */
+function updateClock(){
+  const now=new Date();
+  document.getElementById('sbTime').textContent=
+    now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+}
+updateClock();
+setInterval(updateClock,30000);
+</script>
+</body>
+</html>
