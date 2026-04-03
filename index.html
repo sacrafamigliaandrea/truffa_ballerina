@@ -71,24 +71,62 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .analysis-right{flex:1;min-width:0;display:flex;flex-direction:column;height:calc(100vh - 120px);max-height:560px;justify-content:center;}
 .analysis-right .ar-title{font-size:1.3rem;font-weight:700;margin-bottom:8px;}
 
-/* Stepper */
-.an-stepper{flex:1;position:relative;overflow:hidden;min-height:0;}
-.an-slide{display:none;animation:fu .35s ease;}
-.an-slide.active{display:block;}
-.an-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;}
-.an-nav-btn{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);font-family:var(--font);font-size:0.78rem;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;}
+/* Accumulative analysis */
+.an-stepper{flex:1;overflow-y:auto;min-height:0;padding-right:4px;}
+.an-stepper::-webkit-scrollbar{width:3px;}
+.an-stepper::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px;}
+.an-slide{display:none;animation:fu .4s ease;}
+.an-slide.visible{display:block;}
+.an-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:10px;flex-shrink:0;}
+.an-nav-btn{padding:8px 20px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);font-family:var(--font);font-size:0.78rem;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;}
 .an-nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
 .an-nav-btn:disabled{opacity:.3;cursor:default;}
 .an-nav-next{background:var(--accent);color:#fff;border-color:var(--accent);}
 .an-nav-next:hover:not(:disabled){filter:brightness(1.1);}
-.an-nav-dots{display:flex;gap:5px;}
-.an-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s;}
-.an-dot.active{background:var(--accent);transform:scale(1.3);}
+.an-counter{font-family:var(--mono);font-size:0.72rem;color:var(--muted);}
 
 /* Sim panels internal scroll */
 .sim-left,.sim-right{overflow-y:auto;max-height:calc(100vh - 80px);}
 .sim-left::-webkit-scrollbar,.sim-right::-webkit-scrollbar{width:3px;}
 .sim-left::-webkit-scrollbar-thumb,.sim-right::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px;}
+
+/* Checkbox gate */
+.chk-gate{margin-top:8px;}
+.cg-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);}
+.cg-item:last-child{border-bottom:none;}
+.cg-box{width:16px;height:16px;border-radius:4px;border:2px solid #bbb;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.cg-item.checked .cg-box{background:var(--success);border-color:var(--success);}
+.cg-item.checked .cg-box::after{content:'';width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px);display:block;}
+.cg-text{font-size:0.72rem;line-height:1.45;color:var(--muted);}
+.cg-item.checked .cg-text{color:var(--text);}
+.chk-gate-msg{font-size:0.65rem;color:var(--danger);text-align:center;margin-top:6px;font-weight:600;}
+.chk-gate-msg.done{color:var(--success);}
+
+/* Glossary popup */
+.gloss-overlay{display:none;position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;}
+.gloss-overlay.open{display:flex;}
+.gloss-box{background:var(--bg2);border-radius:14px;padding:28px;max-width:420px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,0.15);border:1px solid var(--border);}
+.gloss-term{font-size:1.1rem;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px;}
+.gloss-term .gt-badge{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#fff;flex-shrink:0;}
+.gloss-def{font-size:0.85rem;line-height:1.6;color:var(--muted);margin:12px 0 18px;padding:14px;background:var(--bg);border-radius:8px;border:1px solid var(--border);}
+.gloss-prompt{font-size:0.78rem;font-weight:600;color:var(--text);margin-bottom:8px;}
+.gloss-input{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-family:var(--font);font-size:0.82rem;line-height:1.5;resize:none;height:72px;outline:none;transition:border-color .2s;background:var(--bg2);color:var(--text);}
+.gloss-input:focus{border-color:var(--accent);}
+.gloss-input::placeholder{color:#bbb;}
+.gloss-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;}
+.gloss-hint{font-size:0.68rem;color:var(--muted);}
+.gloss-hint.warn{color:var(--danger);}
+.gloss-close{padding:10px 24px;border:none;border-radius:8px;font-family:var(--font);font-weight:600;font-size:0.82rem;cursor:pointer;transition:all .2s;}
+.gloss-close.locked{background:var(--border);color:var(--muted);cursor:not-allowed;}
+.gloss-close.unlocked{background:var(--accent);color:#fff;}
+.gloss-close.unlocked:hover{filter:brightness(1.1);}
+
+/* Skill item clickable */
+.skill-item{cursor:pointer;transition:all .2s;border-radius:6px;padding:6px 4px;}
+.skill-item:hover{background:var(--bg3);}
+.sk-understood{display:none;width:14px;height:14px;flex-shrink:0;}
+.skill-item.understood .sk-understood{display:block;}
+.skill-item.understood{opacity:.7;}
 
 /* Response input */
 .resp-area{background:var(--wah);padding:6px 10px;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0;}
@@ -104,7 +142,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* ═══ PAGE 3: SIMULATOR ═══ */
 #pgSim{padding:60px 12px 8px;align-items:stretch;justify-content:flex-start;}
-.sim-layout{display:flex;gap:20px;max-width:1280px;width:100%;margin:0 auto;align-items:flex-start;}
+.sim-layout{display:flex;gap:20px;max-width:1280px;width:100%;margin:0 auto;align-items:flex-start;justify-content:center;}
 .sim-left{flex:1;min-width:220px;max-width:300px;position:sticky;top:68px;}
 .sim-phone-area{flex-shrink:0;}
 .sim-right{flex:1;min-width:220px;max-width:300px;position:sticky;top:68px;}
@@ -303,6 +341,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   <div class="sh-right">Attivita' in laboratorio<br>con l'Animatore Digitale</div>
 </header>
 
+<div class="gloss-overlay" id="glossOverlay">
+  <div class="gloss-box">
+    <div class="gloss-term"><span class="gt-badge" id="gtBadge"></span><span id="gtName"></span></div>
+    <div class="gloss-def" id="gtDef"></div>
+    <div class="gloss-prompt">Riscrivi questa definizione con parole tue:</div>
+    <textarea class="gloss-input" id="gtInput" placeholder="Scrivi qui cosa significa secondo te..." oninput="checkGlossInput()"></textarea>
+    <div class="gloss-footer">
+      <div class="gloss-hint" id="gtHint">Scrivi almeno 15 caratteri per chiudere</div>
+      <button class="gloss-close locked" id="gtClose" onclick="closeGloss()">Ho capito</button>
+    </div>
+  </div>
+</div>
+
 <div class="lb" id="lb" onclick="this.classList.remove('open')"><button class="lb-x"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button><img id="lbi" src=""></div>
 
 <!-- PAGE 1: VIDEO -->
@@ -336,7 +387,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <h2 class="ar-title">Smontiamo il messaggio</h2>
 
     <div class="an-stepper" id="anStepper">
-      <div class="an-slide active" data-step="0">
+      <div class="an-slide" data-step="0">
         <div class="an-step"><div class="an-num">1</div><div class="an-body">
           <div class="an-quote">"Ciao, ascolta, potresti votare per mia nipote?"</div>
           <h4>Tono familiare + richiesta d'aiuto</h4>
@@ -387,9 +438,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     </div>
 
     <div class="an-nav">
-      <button class="an-nav-btn" id="anPrev" onclick="anStep(-1)" disabled>&larr; Indietro</button>
-      <span class="an-nav-dots" id="anDots"></span>
-      <button class="an-nav-btn an-nav-next" id="anNext" onclick="anStep(1)">Avanti &rarr;</button>
+      <span class="an-counter" id="anCounter">1 / 7</span>
+      <button class="an-nav-btn an-nav-next" id="anNext" onclick="anRevealNext()">Scopri il prossimo segnale &rarr;</button>
     </div>
     <div id="anStartBtn" style="display:none;text-align:center;margin-top:12px;">
       <button class="btn btn-accent" onclick="startSim()">Inizia: 50 messaggi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
@@ -409,14 +459,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   <div class="sc-strip"><div class="sc-box sg"><div class="v" id="scOk">0</div><div class="l">Corrette</div></div><div class="sc-box sd"><div class="v" id="scKo">0</div><div class="l">Sbagliate</div></div><div class="sc-box st"><div class="v" id="scTot">50</div><div class="l">Rimaste</div></div></div>
 
   <div class="sp-card class-card" id="classCard">
-    <div class="sp-title">Classificazione</div>
+    <div class="sp-title">Prima di rispondere, analizza</div>
     <div class="cc-type" id="ccType"></div>
-    <div class="cc-cat" id="ccCat"></div>
-    <div class="cc-desc" id="ccDesc"></div>
-    <div class="cc-risk" id="ccRisk">
-      <div class="cc-risk-label">Rischio concreto</div>
-      <div class="cc-risk-text" id="ccRiskText"></div>
-    </div>
+    <div class="chk-gate" id="chkGate"></div>
+    <div class="chk-gate-msg" id="chkGateMsg">Spunta tutti i punti per sbloccare la risposta</div>
   </div>
 
   <div class="efb" id="efb"></div>
@@ -502,27 +548,83 @@ document.getElementById('exi1').src=IMGS[1];
 // Lightbox
 function lbOpen(i){document.getElementById('lbi').src=IMGS[i];document.getElementById('lb').classList.add('open');}
 
-// ═══ ANALYSIS STEPPER ═══
-let anCur=0;const AN_TOTAL=7;
-function initAnStepper(){
-  const dots=document.getElementById('anDots');dots.innerHTML='';
-  for(let i=0;i<AN_TOTAL;i++){const d=document.createElement('div');d.className='an-dot'+(i===0?' active':'');dots.appendChild(d);}
+// ═══ ANALYSIS ACCUMULATIVE ═══
+let anRevealed=0;const AN_TOTAL=7;
+function initAnalysis(){
+  // Show first slide
+  const slides=document.querySelectorAll('.an-slide');
+  if(slides.length>0){slides[0].classList.add('visible');anRevealed=1;updateAnCounter();}
 }
-function anStep(dir){
-  anCur=Math.max(0,Math.min(AN_TOTAL-1,anCur+dir));
-  document.querySelectorAll('.an-slide').forEach((s,i)=>s.classList.toggle('active',i===anCur));
-  document.querySelectorAll('.an-dot').forEach((d,i)=>d.classList.toggle('active',i===anCur));
-  document.getElementById('anPrev').disabled=anCur===0;
-  const nb=document.getElementById('anNext');
-  if(anCur>=AN_TOTAL-1){nb.style.display='none';document.getElementById('anStartBtn').style.display='block';}
-  else{nb.style.display='';document.getElementById('anStartBtn').style.display='none';}
+function anRevealNext(){
+  const slides=document.querySelectorAll('.an-slide');
+  if(anRevealed<slides.length){
+    slides[anRevealed].classList.add('visible');
+    anRevealed++;
+    updateAnCounter();
+    // Scroll to newly revealed
+    const stepper=document.getElementById('anStepper');
+    setTimeout(()=>{stepper.scrollTop=stepper.scrollHeight;},100);
+  }
+  if(anRevealed>=AN_TOTAL){
+    document.getElementById('anNext').style.display='none';
+    document.getElementById('anStartBtn').style.display='block';
+  }
 }
-initAnStepper();
+function updateAnCounter(){
+  document.getElementById('anCounter').textContent=anRevealed+' / '+AN_TOTAL;
+}
+initAnalysis();
 
 // ═══ SEGNALA ═══
 function doSegnala(){
   const w=document.getElementById('segnalaWrap');
   w.innerHTML='<div class="segnala-done">Segnalazione inviata ai tuoi contatti e alla Polizia Postale.</div>';
+}
+function checkGate(){
+  const items=document.querySelectorAll('#chkGate .cg-item');
+  const checked=document.querySelectorAll('#chkGate .cg-item.checked');
+  const allDone=items.length>0 && checked.length===items.length;
+  document.getElementById('bT').disabled=!allDone;
+  document.getElementById('bD').disabled=!allDone;
+  if(allDone){
+    document.getElementById('chkGateMsg').textContent='Analisi completata. Ora rispondi!';
+    document.getElementById('chkGateMsg').className='chk-gate-msg done';
+  }
+}
+
+// ═══ GLOSSARY POPUP ═══
+let glossCurrent=null;
+function openGloss(sid){
+  glossCurrent=sid;
+  const sk=SKILLS.find(x=>x.id===sid);
+  if(!sk)return;
+  document.getElementById('gtBadge').textContent=sid.substring(0,2).toUpperCase();
+  document.getElementById('gtBadge').style.background=sk.color;
+  document.getElementById('gtName').textContent=sk.name;
+  document.getElementById('gtDef').textContent=GLOSSARY[sid]||'';
+  document.getElementById('gtInput').value=glossUnderstood[sid]||'';
+  checkGlossInput();
+  document.getElementById('glossOverlay').classList.add('open');
+  document.getElementById('gtInput').focus();
+}
+function checkGlossInput(){
+  const v=document.getElementById('gtInput').value.trim();
+  const ok=v.length>=15;
+  const btn=document.getElementById('gtClose');
+  btn.className='gloss-close '+(ok?'unlocked':'locked');
+  const hint=document.getElementById('gtHint');
+  if(ok){hint.textContent='Ottimo! Puoi chiudere.';hint.className='gloss-hint';}
+  else{hint.textContent='Scrivi almeno '+(15-v.length)+' caratteri';hint.className='gloss-hint warn';}
+}
+function closeGloss(){
+  const v=document.getElementById('gtInput').value.trim();
+  if(v.length<15)return;
+  glossUnderstood[glossCurrent]=v;
+  document.getElementById('glossOverlay').classList.remove('open');
+  // Mark skill as understood
+  const el=document.getElementById('sk-'+glossCurrent);
+  if(el)el.classList.add('understood');
+  glossCurrent=null;
 }
 
 // Navigation
@@ -543,6 +645,17 @@ const SKILLS=[
   {id:'ver',name:'Verifica mittente',color:'#16a085',max:0,pts:0},
   {id:'aut',name:'Messaggi autentici',color:'#1a7a5a',max:0,pts:0},
 ];
+const GLOSSARY={
+  dom:"L'indirizzo del sito web (come baldancig.top o ch3ck-foto.me). Se il nome e' strano, inventato, ha numeri al posto delle lettere o usa estensioni insolite (.top, .xyz, .click), quasi certamente e' un sito falso creato apposta per truffarti.",
+  emo:"Tecnica che usa i tuoi sentimenti per farti agire senza pensare. Compassione ('e\' per una bambina!'), senso di colpa ('sarebbe davvero importante per lei'), paura ('perderemo!'). Il truffatore vuole che tu agisca col cuore, non con la testa.",
+  cod:"I codici segreti come quello a 6 cifre di WhatsApp servono a proteggere il TUO account. Se qualcuno te li chiede, vuole impossessarsi del tuo profilo. Non vanno MAI condivisi con nessuno, nemmeno con familiari.",
+  urg:"Quando un messaggio ti mette fretta ('subito!', 'scade tra 1 ora!', 'entro stasera!') serve a impedirti di riflettere. Le situazioni reali raramente richiedono azioni istantanee via messaggio.",
+  lnk:"Indirizzi web (URL) che portano a siti falsi che imitano quelli veri. Si riconoscono da nomi inventati, estensioni insolite e errori di scrittura. Un link sicuro ha un dominio riconoscibile (es: whatsapp.com, google.com).",
+  den:"Quando qualcuno ti chiede soldi o pagamenti via messaggio. Anche se sembra un amico o parente in emergenza, potrebbe essere un truffatore che ha rubato il suo account. Regola d'oro: CHIAMA sempre prima di inviare denaro.",
+  ver:"Controllare se chi ti scrive e' davvero chi dice di essere. Il numero puo' essere quello giusto ma l'account potrebbe essere stato rubato. Il modo migliore per verificare: fare una telefonata vocale.",
+  aut:"Messaggi veri da persone reali. Li riconosci perche' non hanno link strani, non chiedono codici ne' soldi, non mettono fretta artificiale, e il contenuto e' coerente con quella persona e quel contesto.",
+};
+let glossUnderstood={};
 // Map scenario type keywords to skills + classification
 function getSkills(s){
   const t=s[6].toLowerCase(),txt=s[4].toLowerCase();
@@ -594,10 +707,12 @@ function startSim(){
 }
 function buildSkillList(){
   const el=document.getElementById('skillList');el.innerHTML='';
+  glossUnderstood={};
   SKILLS.forEach(sk=>{
     if(sk.max===0) return;
-    const d=document.createElement('div');d.className='skill-item';d.id='sk-'+sk.id;
-    d.innerHTML='<div class="sk-icon" style="background:'+sk.color+'">'+sk.id.substring(0,2).toUpperCase()+'</div><div class="sk-info"><div class="sk-name">'+sk.name+'</div><div class="sk-bar-wrap"><div class="sk-bar" style="width:0%;background:'+sk.color+'"></div></div></div><div class="sk-pts" id="skp-'+sk.id+'">0/'+sk.max+'</div>';
+    const d=document.createElement('div');d.className='skill-item'+(glossUnderstood[sk.id]?' understood':'');d.id='sk-'+sk.id;
+    d.innerHTML='<div class="sk-icon" style="background:'+sk.color+'">'+sk.id.substring(0,2).toUpperCase()+'</div><div class="sk-info"><div class="sk-name">'+sk.name+'</div><div class="sk-bar-wrap"><div class="sk-bar" style="width:0%;background:'+sk.color+'"></div></div></div><svg class="sk-understood" viewBox="0 0 24 24" fill="none" stroke="'+sk.color+'" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg><div class="sk-pts" id="skp-'+sk.id+'">0/'+sk.max+'</div>';
+    d.onclick=()=>openGloss(sk.id);
     el.appendChild(d);
   });
 }
@@ -630,14 +745,28 @@ function showScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.re
 
 function openC(idx){
   cur=idx;const s=S[idx];hideEfb();
-  // Show classification
+  // Show classification with checkable analysis items
   const cl=getClassification(s);
   const cc=document.getElementById('classCard');cc.classList.add('show');
   document.getElementById('ccType').textContent=s[6];
   document.getElementById('ccType').className='cc-type '+cl.cls;
-  document.getElementById('ccCat').textContent=cl.cat;
-  document.getElementById('ccDesc').textContent=cl.desc;
-  document.getElementById('ccRiskText').textContent=cl.risk;
+  // Build checkable items
+  const gateItems=[];
+  gateItems.push('Tipo: '+cl.cat);
+  gateItems.push(cl.desc);
+  gateItems.push('Rischio: '+cl.risk);
+  const gateEl=document.getElementById('chkGate');gateEl.innerHTML='';
+  gateItems.forEach((txt,i)=>{
+    const d=document.createElement('div');d.className='cg-item';
+    d.innerHTML='<div class="cg-box"></div><div class="cg-text">'+txt+'</div>';
+    d.onclick=()=>{d.classList.toggle('checked');checkGate();};
+    gateEl.appendChild(d);
+  });
+  document.getElementById('chkGateMsg').textContent='Spunta tutti i punti per sbloccare la risposta';
+  document.getElementById('chkGateMsg').className='chk-gate-msg';
+  // Disable answer buttons until all checked
+  document.getElementById('bT').disabled=true;
+  document.getElementById('bD').disabled=true;
   document.getElementById('chH').innerHTML=`<button class="chb" onclick="closeC()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="cha" style="background:${s[2]}">${s[1]}</div><div class="chi"><div class="chi-n">${s[0]}</div><div class="chi-s">online</div></div>`;
   const mc=document.getElementById('chM');mc.innerHTML='';
   // Parse messages: split by \n, handle links
@@ -660,8 +789,6 @@ function openC(idx){
   if(bubbleText)addBubble(mc,bubbleText,s[3]);
 
   document.getElementById('chD').style.display='block';
-  document.getElementById('bT').disabled=false;
-  document.getElementById('bD').disabled=false;
   document.getElementById('respInput').value='';
   document.getElementById('segnalaWrap').classList.remove('show');
   document.getElementById('segnalaWrap').innerHTML='<button class="segnala-btn" onclick="doSegnala()">SEGNALA ALLA RETE</button>';
