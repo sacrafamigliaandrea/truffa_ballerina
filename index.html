@@ -24,7 +24,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .site-footer{text-align:center;padding:24px;font-size:0.68rem;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);background:var(--bg2);}
 
 /* ═══ SCREENS ═══ */
-.page{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:76px 24px 24px;}
+.page{display:none;height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px 12px;overflow:hidden;}
 .page.active{display:flex;}
 
 /* ═══ PAGE 1: VIDEO ═══ */
@@ -40,53 +40,143 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .btn-accent:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,122,90,0.2);}
 .btn svg{width:18px;height:18px;}
 
-/* ═══ PAGE 2: EXAMPLES ═══ */
+/* ═══ PAGE 2: ANALYSIS ═══ */
 #pgExamples{background:var(--bg);}
-.ex-wrap{max-width:700px;width:100%;text-align:center;}
-.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;}
-.ex-card{border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--bg2);cursor:pointer;transition:all .3s;position:relative;}
-.ex-card:hover{transform:translateY(-3px);border-color:var(--danger);box-shadow:0 8px 24px rgba(192,57,43,0.1);}
-.ex-card img{width:100%;display:block;max-height:280px;object-fit:cover;object-position:top;}
-.ex-label{position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,0.8);border-radius:6px;padding:6px 10px;font-size:0.7rem;color:#e74c3c;font-weight:600;text-align:left;}
-.ex-signals{text-align:left;margin:20px 0;padding:20px;border-radius:12px;background:var(--bg2);border:1px solid var(--border);}
-.ex-signals h3{font-size:0.85rem;color:var(--danger);margin-bottom:10px;letter-spacing:0.04em;text-transform:uppercase;}
-.ex-sig{font-size:0.82rem;line-height:1.7;color:var(--muted);padding:2px 0;}
-.ex-sig strong{color:var(--text);}
-.ex-sig::before{content:'\2022';color:var(--danger);margin-right:8px;}
+.analysis-layout{max-width:920px;width:100%;display:flex;gap:36px;align-items:flex-start;}
+.analysis-left{flex:0 0 280px;position:sticky;top:80px;}
+.analysis-left img{width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);border:1px solid var(--border);cursor:pointer;transition:transform .3s;}
+.analysis-left img:hover{transform:scale(1.02);}
+.analysis-left .al-caption{font-size:0.7rem;color:var(--muted);text-align:center;margin-top:8px;}
+.analysis-right{flex:1;min-width:0;}
+.analysis-right .ar-title{font-size:clamp(1.3rem,2.5vw,1.7rem);font-weight:700;line-height:1.15;margin-bottom:6px;}
+.analysis-right .ar-sub{font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:24px;}
+.an-step{display:flex;gap:14px;align-items:flex-start;margin-bottom:18px;padding:14px 16px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);transition:all .2s;}
+.an-step:hover{border-color:var(--danger);box-shadow:0 2px 12px rgba(192,57,43,0.06);}
+.an-num{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:0.75rem;color:#fff;background:var(--danger);}
+.an-step.step-green .an-num{background:var(--success);}
+.an-body h4{font-size:0.85rem;font-weight:600;margin-bottom:3px;color:var(--text);}
+.an-body .an-quote{font-size:0.75rem;font-style:italic;color:var(--danger);background:rgba(192,57,43,0.05);padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:4px;}
+.an-body p{font-size:0.8rem;line-height:1.55;color:var(--muted);}
+.an-conclusion{margin-top:24px;padding:16px 20px;border-radius:10px;background:rgba(192,57,43,0.04);border:1px solid rgba(192,57,43,0.12);}
+.an-conclusion h4{font-size:0.88rem;color:var(--danger);margin-bottom:4px;}
+.an-conclusion p{font-size:0.82rem;line-height:1.6;color:var(--muted);}
+.an-btn-wrap{margin-top:28px;}
+
+/* Analysis phone */
+.iphone-sm{width:260px;height:calc(100vh - 120px);max-height:560px;}
+.scr-img{flex:1;overflow:hidden;background:var(--wa);}
+.scr-img img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
+.analysis-layout{max-width:920px;width:100%;display:flex;gap:28px;align-items:center;height:calc(100vh - 80px);}
+.analysis-left{flex-shrink:0;}
+.analysis-right{flex:1;min-width:0;display:flex;flex-direction:column;height:calc(100vh - 120px);max-height:560px;justify-content:center;}
+.analysis-right .ar-title{font-size:1.3rem;font-weight:700;margin-bottom:8px;}
+
+/* Stepper */
+.an-stepper{flex:1;position:relative;overflow:hidden;min-height:0;}
+.an-slide{display:none;animation:fu .35s ease;}
+.an-slide.active{display:block;}
+.an-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;}
+.an-nav-btn{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);font-family:var(--font);font-size:0.78rem;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;}
+.an-nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.an-nav-btn:disabled{opacity:.3;cursor:default;}
+.an-nav-next{background:var(--accent);color:#fff;border-color:var(--accent);}
+.an-nav-next:hover:not(:disabled){filter:brightness(1.1);}
+.an-nav-dots{display:flex;gap:5px;}
+.an-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s;}
+.an-dot.active{background:var(--accent);transform:scale(1.3);}
+
+/* Sim panels internal scroll */
+.sim-left,.sim-right{overflow-y:auto;max-height:calc(100vh - 80px);}
+.sim-left::-webkit-scrollbar,.sim-right::-webkit-scrollbar{width:3px;}
+.sim-left::-webkit-scrollbar-thumb,.sim-right::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px;}
+
+/* Response input */
+.resp-area{background:var(--wah);padding:6px 10px;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0;}
+.resp-input{width:100%;padding:7px 10px;border:1px solid rgba(255,255,255,0.1);border-radius:16px;background:rgba(255,255,255,0.06);color:#e8edf5;font-family:var(--font);font-size:0.72rem;outline:none;resize:none;height:32px;}
+.resp-input::placeholder{color:var(--wat);}
+
+/* Segnala button */
+.segnala-wrap{display:none;text-align:center;padding:6px 10px;background:var(--wah);flex-shrink:0;}
+.segnala-wrap.show{display:block;animation:fu .3s ease;}
+.segnala-btn{padding:7px 20px;border:1px solid #e67e22;border-radius:8px;background:rgba(230,126,34,0.12);color:#e67e22;font-family:var(--font);font-size:0.7rem;font-weight:700;cursor:pointer;letter-spacing:0.04em;transition:all .2s;}
+.segnala-btn:hover{background:rgba(230,126,34,0.25);}
+.segnala-done{font-size:0.68rem;color:#e67e22;font-weight:600;padding:4px 0;}
 
 /* ═══ PAGE 3: SIMULATOR ═══ */
-#pgSim{padding:68px 16px 16px;align-items:stretch;justify-content:flex-start;min-height:100vh;}
-.sim-layout{display:flex;gap:32px;max-width:1100px;width:100%;margin:0 auto;align-items:flex-start;flex-wrap:wrap;}
-.sim-panel{flex:1;min-width:260px;max-width:420px;position:sticky;top:68px;}
+#pgSim{padding:60px 12px 8px;align-items:stretch;justify-content:flex-start;}
+.sim-layout{display:flex;gap:20px;max-width:1280px;width:100%;margin:0 auto;align-items:flex-start;}
+.sim-left{flex:1;min-width:220px;max-width:300px;position:sticky;top:68px;}
 .sim-phone-area{flex-shrink:0;}
+.sim-right{flex:1;min-width:220px;max-width:300px;position:sticky;top:68px;}
+
+/* Shared panel card */
+.sp-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;}
+.sp-title{font-size:0.68rem;font-weight:700;color:var(--accent);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;}
 
 /* Progress */
-.wave-bar{margin-bottom:16px;}
-.wave-label{font-size:0.72rem;color:var(--muted);margin-bottom:6px;font-family:var(--mono);display:flex;justify-content:space-between;}
-.wave-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.wave-bar{margin-bottom:12px;}
+.wave-label{font-size:0.68rem;color:var(--muted);margin-bottom:5px;font-family:var(--mono);display:flex;justify-content:space-between;}
+.wave-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
 .wave-fill{height:100%;background:linear-gradient(90deg,var(--accent),#2ecc71);border-radius:3px;transition:width .5s ease;}
 
-/* Score */
-.sc-strip{display:flex;gap:10px;margin-bottom:16px;}
-.sc-box{flex:1;text-align:center;padding:12px 6px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);}
-.sc-box .v{font-family:var(--mono);font-size:1.4rem;font-weight:700;}
-.sc-box .l{font-size:0.65rem;color:var(--muted);margin-top:2px;}
+/* Score strip */
+.sc-strip{display:flex;gap:8px;margin-bottom:12px;}
+.sc-box{flex:1;text-align:center;padding:10px 4px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);}
+.sc-box .v{font-family:var(--mono);font-size:1.2rem;font-weight:700;}
+.sc-box .l{font-size:0.6rem;color:var(--muted);margin-top:1px;}
 .sc-box.sg .v{color:var(--success);}
 .sc-box.sd .v{color:var(--danger);}
 .sc-box.st .v{color:var(--accent);}
 
+/* Classification card */
+.class-card{display:none;animation:fu .4s ease;}
+.class-card.show{display:block;}
+.cc-type{display:inline-block;padding:3px 8px;border-radius:5px;font-size:0.62rem;font-weight:700;margin-bottom:8px;letter-spacing:0.03em;}
+.cc-type.cc-trap{background:rgba(192,57,43,0.1);color:var(--danger);}
+.cc-type.cc-safe{background:rgba(26,122,90,0.1);color:var(--success);}
+.cc-cat{font-size:0.8rem;font-weight:600;margin-bottom:4px;}
+.cc-desc{font-size:0.75rem;line-height:1.5;color:var(--muted);}
+.cc-risk{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+.cc-risk-label{font-size:0.62rem;font-weight:700;color:var(--danger);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;}
+.cc-risk-text{font-size:0.72rem;line-height:1.5;color:var(--muted);}
+
 /* Ext feedback */
-.efb{padding:16px;border-radius:10px;margin-top:12px;display:none;animation:fu .4s ease;}
+.efb{padding:14px;border-radius:10px;margin-bottom:12px;display:none;animation:fu .4s ease;}
 .efb.show{display:block;}
 .efb.eok{background:rgba(26,122,90,0.06);border:1px solid rgba(26,122,90,0.18);}
 .efb.eko{background:rgba(192,57,43,0.06);border:1px solid rgba(192,57,43,0.18);}
-.efb h4{font-size:0.88rem;margin-bottom:4px;}
+.efb h4{font-size:0.82rem;margin-bottom:3px;}
 .eok h4{color:var(--success);}
 .eko h4{color:var(--danger);}
-.efb p{font-size:0.8rem;line-height:1.6;color:var(--muted);}
-.efb .etag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:0.65rem;font-weight:600;margin-bottom:6px;}
+.efb p{font-size:0.75rem;line-height:1.55;color:var(--muted);}
+.efb .etag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:0.6rem;font-weight:600;margin-bottom:5px;}
 .eok .etag{background:rgba(26,122,90,0.1);color:var(--success);}
 .eko .etag{background:rgba(192,57,43,0.1);color:var(--danger);}
+
+/* Risks section */
+.risk-section{font-size:0.75rem;line-height:1.55;color:var(--muted);}
+.risk-section h4{font-size:0.78rem;font-weight:600;color:var(--text);margin-bottom:4px;}
+.risk-item{padding:4px 0;}
+.risk-item::before{content:'\25B8';color:var(--danger);margin-right:6px;font-size:0.65rem;}
+
+/* ═══ RIGHT PANEL: SKILLS ═══ */
+.pts-display{text-align:center;margin-bottom:6px;}
+.pts-num{font-family:var(--mono);font-size:2rem;font-weight:700;color:var(--accent);transition:all .3s;}
+.pts-label{font-size:0.62rem;color:var(--muted);}
+.pts-change{font-size:0.85rem;font-weight:700;opacity:0;transition:opacity .3s;display:inline-block;margin-left:4px;}
+.pts-change.plus{color:var(--success);opacity:1;}
+.pts-change.minus{color:var(--danger);opacity:1;}
+.streak-bar{text-align:center;margin-bottom:10px;font-size:0.68rem;color:var(--muted);}
+.streak-bar strong{color:var(--accent);}
+
+.skill-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
+.skill-item:last-child{border-bottom:none;}
+.sk-icon{width:24px;height:24px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:#fff;}
+.sk-info{flex:1;min-width:0;}
+.sk-name{font-size:0.72rem;font-weight:600;color:var(--text);}
+.sk-bar-wrap{height:4px;background:var(--border);border-radius:2px;margin-top:3px;overflow:hidden;}
+.sk-bar{height:100%;border-radius:2px;transition:width .5s ease;min-width:0;}
+.sk-pts{font-family:var(--mono);font-size:0.65rem;font-weight:600;color:var(--muted);flex-shrink:0;min-width:28px;text-align:right;}
 
 /* ═══ iPHONE ═══ */
 .iphone{width:310px;height:620px;background:#000;border-radius:44px;border:3px solid #2a2a2e;box-shadow:0 4px 32px rgba(0,0,0,0.18);position:relative;overflow:hidden;display:flex;flex-direction:column;}
@@ -126,7 +216,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .cha{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.7rem;color:#fff;}
 .chi{flex:1;}.chi-n{font-size:0.82rem;font-weight:600;color:#fff;}.chi-s{font-size:0.62rem;color:var(--wat);}
 .cms{flex:1;overflow-y:auto;background:var(--wa);padding:10px 8px;display:flex;flex-direction:column;}
-.mb{max-width:88%;padding:7px 9px;margin-bottom:5px;border-radius:9px 9px 9px 3px;font-size:0.75rem;line-height:1.5;background:var(--wab);opacity:0;transform:translateY(6px);animation:bi .3s ease forwards;word-wrap:break-word;}
+.mb{max-width:88%;padding:7px 9px;margin-bottom:5px;border-radius:9px 9px 9px 3px;font-size:0.75rem;line-height:1.5;background:var(--wab);color:#e8edf5;opacity:0;transform:translateY(6px);animation:bi .3s ease forwards;word-wrap:break-word;}
 .mb:nth-child(1){animation-delay:.15s;}.mb:nth-child(2){animation-delay:.5s;}.mb:nth-child(3){animation-delay:.85s;}.mb:nth-child(4){animation-delay:1.2s;}
 .mt{font-size:0.55rem;color:var(--wat);float:right;margin-left:8px;margin-top:3px;}
 .ml{color:#53bdeb;word-break:break-all;pointer-events:none;text-decoration:none;}
@@ -185,11 +275,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 @keyframes bi{to{opacity:1;transform:translateY(0);}}
 @keyframes fu{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 @media(max-width:740px){
-  .sim-layout{flex-direction:column-reverse;align-items:center;}
-  .sim-panel{max-width:100%;position:static;order:2;}
+@media(max-width:1000px){
+  .sim-layout{flex-wrap:wrap;justify-content:center;}
+  .sim-left,.sim-right{flex:1 1 100%;max-width:100%;position:static;order:2;}
   .sim-phone-area{order:1;}
-  .ex-grid{grid-template-columns:1fr;}
-  .ex-card img{max-height:200px;}
+  .sim-right{order:3;}
+}
+@media(max-width:700px){
+  .analysis-layout{flex-direction:column;gap:20px;}
+  .analysis-left{flex:none;width:100%;max-width:240px;margin:0 auto;position:static;}
+  .iphone-sm{width:240px;height:400px;}
+  .analysis-right{height:auto;max-height:none;}
+}
 }
 .cl::-webkit-scrollbar,.cms::-webkit-scrollbar{width:3px;}
 .cl::-webkit-scrollbar-thumb,.cms::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px;}
@@ -219,36 +316,122 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 </div>
 </div>
 
-<!-- PAGE 2: EXAMPLES -->
+<!-- PAGE 2: ANALYSIS -->
 <div class="page" id="pgExamples">
-<div class="ex-wrap">
-<div class="vid-badge">Casi reali</div>
-<h2 class="vid-title" style="font-size:clamp(1.4rem,3vw,2rem);">Screenshot <span style="color:var(--danger)">autentici</span></h2>
-<p class="vid-sub" style="margin:0 auto 8px;">Questi messaggi sono stati ricevuti da persone vere nelle ultime settimane. Tocca per ingrandire.</p>
-<div class="ex-grid">
-<div class="ex-card" onclick="lbOpen(0)"><img id="exi1"><div class="ex-label">ditropicroma.pro &mdash; "Vota Francesca"</div></div>
-<div class="ex-card" onclick="lbOpen(1)"><img id="exi2"><div class="ex-label">baldancig.top &mdash; "Vota Sofia"</div></div>
-</div>
-<div class="ex-signals">
-<h3>Segnali d'allarme in comune</h3>
-<div class="ex-sig"><strong>Domini inventati</strong> &mdash; nomi senza senso, mai visti prima</div>
-<div class="ex-sig"><strong>Leva emotiva</strong> &mdash; bambina, danza, spettacolo, "sarebbe importante"</div>
-<div class="ex-sig"><strong>Urgenza</strong> &mdash; "non abbiamo molto tempo", "grazie mille in anticipo"</div>
-<div class="ex-sig"><strong>Gratuita'</strong> &mdash; "non costa niente" per abbassare le difese</div>
-<div class="ex-sig"><strong>Mittente reale</strong> &mdash; arriva da un contatto fidato, gia' hackerato</div>
-</div>
-<button class="btn btn-accent" onclick="startSim()">Inizia la simulazione: 50 messaggi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+<div class="analysis-layout">
+
+  <!-- LEFT: iPhone with real screenshot -->
+  <div class="analysis-left">
+    <div class="iphone iphone-sm">
+      <div class="di"></div>
+      <div class="sb"><span>09:23</span><div class="sb-r"><svg viewBox="0 0 18 12"><rect x="0" y="5" width="3" height="7" rx=".5"/><rect x="4" y="3" width="3" height="9" rx=".5"/><rect x="8" y="1" width="3" height="11" rx=".5"/><rect x="12" y="0" width="3" height="12" rx=".5"/></svg><svg viewBox="0 0 16 12"><path d="M1 8.5C3.5 4 6.5 1.5 8 1.5S12.5 4 15 8.5" stroke="#fff" stroke-width="1.5" fill="none"/><circle cx="8" cy="10" r="1.5"/></svg><svg viewBox="0 0 25 12"><rect x="0" y="1" width="21" height="10" rx="2" stroke="#fff" stroke-width="1.2" fill="none"/><rect x="2" y="3" width="15" height="6" rx="1" fill="#fff"/><rect x="22" y="4" width="2.5" height="4" rx=".8" fill="#fff" opacity=".4"/></svg></div></div>
+      <div class="scr-img"><img id="exi1" alt="Screenshot reale"></div>
+      <div class="hi"><div class="hi-b"></div></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Step-by-step analysis -->
+  <div class="analysis-right">
+    <div class="vid-badge">Anatomia della truffa</div>
+    <h2 class="ar-title">Smontiamo il messaggio</h2>
+
+    <div class="an-stepper" id="anStepper">
+      <div class="an-slide active" data-step="0">
+        <div class="an-step"><div class="an-num">1</div><div class="an-body">
+          <div class="an-quote">"Ciao, ascolta, potresti votare per mia nipote?"</div>
+          <h4>Tono familiare + richiesta d'aiuto</h4>
+          <p>Il messaggio parte con un saluto informale e chiede un favore. Ti mette nella posizione di chi puo' aiutare: rifiutare ti farebbe sentire scortese.</p>
+        </div></div>
+      </div>
+      <div class="an-slide" data-step="1">
+        <div class="an-step"><div class="an-num">2</div><div class="an-body">
+          <div class="an-quote">"Si chiama Sofia. Recita in uno spettacolo teatrale"</div>
+          <h4>Personaggio inventato + contesto credibile</h4>
+          <p>Un nome proprio, un'attivita' concreta (teatro). Tutto costruito per sembrare reale. Sofia non esiste. Lo spettacolo non esiste.</p>
+        </div></div>
+      </div>
+      <div class="an-slide" data-step="2">
+        <div class="an-step"><div class="an-num">3</div><div class="an-body">
+          <div class="an-quote">"le sarebbe di grande aiuto!"</div>
+          <h4>Senso di colpa</h4>
+          <p>Se non voti, togli un'opportunita' a una ragazzina. La leva emotiva e' il cuore di ogni truffa: agisci con il cuore, non con la testa.</p>
+        </div></div>
+      </div>
+      <div class="an-slide" data-step="3">
+        <div class="an-step"><div class="an-num">4</div><div class="an-body">
+          <div class="an-quote">"Non abbiamo molto tempo... se non raccogliamo abbastanza voti perderemo"</div>
+          <h4>Urgenza artificiale</h4>
+          <p>La scadenza serve a impedirti di riflettere. "Non c'e' tempo" = "non pensare, agisci". E' il segnale piu' classico di una truffa.</p>
+        </div></div>
+      </div>
+      <div class="an-slide" data-step="4">
+        <div class="an-step"><div class="an-num">5</div><div class="an-body">
+          <div class="an-quote">baldancig.top/?voite=sofiay</div>
+          <h4>Il dominio: la prova</h4>
+          <p>"baldancig.top" non e' il sito di nessun teatro, nessuna scuola. E' un nome inventato. E "voite" e' scritto sbagliato (dovrebbe essere "vote"). Un sito reale non avrebbe errori cosi'.</p>
+        </div></div>
+      </div>
+      <div class="an-slide" data-step="5">
+        <div class="an-step step-green"><div class="an-num">!</div><div class="an-body">
+          <h4>Il mittente e' un contatto reale</h4>
+          <p>Il messaggio arriva dal numero vero di qualcuno che conosci. Ma il suo account e' gia' stato rubato. Non e' quella persona a scrivere: e' il truffatore che usa la sua identita'.</p>
+        </div></div>
+      </div>
+      <div class="an-slide" data-step="6">
+        <div class="an-step" style="border-color:var(--danger);">
+          <div class="an-num" style="background:var(--text);">?</div><div class="an-body">
+          <h4>Cosa succede se clicchi?</h4>
+          <p>Link &rarr; sito finto &rarr; ti chiede numero + codice 6 cifre &rarr; il truffatore ruba il tuo WhatsApp &rarr; scrive a tutti i tuoi contatti &rarr; chiede soldi fingendo di essere te.</p>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="an-nav">
+      <button class="an-nav-btn" id="anPrev" onclick="anStep(-1)" disabled>&larr; Indietro</button>
+      <span class="an-nav-dots" id="anDots"></span>
+      <button class="an-nav-btn an-nav-next" id="anNext" onclick="anStep(1)">Avanti &rarr;</button>
+    </div>
+    <div id="anStartBtn" style="display:none;text-align:center;margin-top:12px;">
+      <button class="btn btn-accent" onclick="startSim()">Inizia: 50 messaggi <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+
 </div>
 </div>
 
 <!-- PAGE 3: SIMULATOR -->
 <div class="page" id="pgSim">
 <div class="sim-layout">
-<div class="sim-panel" id="simPanel">
-<div class="wave-bar"><div class="wave-label"><span id="wlText">Ondata 1 di 10</span><span id="wlCount">0/50</span></div><div class="wave-track"><div class="wave-fill" id="wFill" style="width:0%"></div></div></div>
-<div class="sc-strip"><div class="sc-box sg"><div class="v" id="scOk">0</div><div class="l">Corrette</div></div><div class="sc-box sd"><div class="v" id="scKo">0</div><div class="l">Sbagliate</div></div><div class="sc-box st"><div class="v" id="scTot">50</div><div class="l">Rimaste</div></div></div>
-<div style="padding:12px 16px;border-radius:10px;background:rgba(192,57,43,0.05);border:1px solid rgba(192,57,43,0.12);margin-bottom:12px;"><p style="font-size:0.8rem;line-height:1.55;color:var(--muted);"><strong style="color:var(--danger);">Ricorda:</strong> ogni messaggio arriva da un contatto salvato in rubrica. Il numero e' reale. Ma non e' detto che sia quella persona a scrivere.</p></div>
-<div class="efb" id="efb"></div>
+
+<!-- LEFT PANEL -->
+<div class="sim-left">
+  <div class="wave-bar"><div class="wave-label"><span id="wlText">Ondata 1 di 10</span><span id="wlCount">0/50</span></div><div class="wave-track"><div class="wave-fill" id="wFill" style="width:0%"></div></div></div>
+  <div class="sc-strip"><div class="sc-box sg"><div class="v" id="scOk">0</div><div class="l">Corrette</div></div><div class="sc-box sd"><div class="v" id="scKo">0</div><div class="l">Sbagliate</div></div><div class="sc-box st"><div class="v" id="scTot">50</div><div class="l">Rimaste</div></div></div>
+
+  <div class="sp-card class-card" id="classCard">
+    <div class="sp-title">Classificazione</div>
+    <div class="cc-type" id="ccType"></div>
+    <div class="cc-cat" id="ccCat"></div>
+    <div class="cc-desc" id="ccDesc"></div>
+    <div class="cc-risk" id="ccRisk">
+      <div class="cc-risk-label">Rischio concreto</div>
+      <div class="cc-risk-text" id="ccRiskText"></div>
+    </div>
+  </div>
+
+  <div class="efb" id="efb"></div>
+
+  <div class="sp-card">
+    <div class="sp-title">Cosa fanno con i tuoi dati?</div>
+    <div class="risk-section">
+      <div class="risk-item">Prendono il controllo del tuo WhatsApp e truffano i tuoi contatti</div>
+      <div class="risk-item">Leggono tutte le tue chat e raccolgono informazioni personali</div>
+      <div class="risk-item">Chiedono soldi ai tuoi amici fingendo di essere te</div>
+      <div class="risk-item">Vendono i tuoi dati (nome, numero, contatti) ad altri truffatori</div>
+      <div class="risk-item">Usano la tua identita' per aprire account falsi</div>
+      <div class="risk-item">Tentano di accedere ai tuoi social con le info raccolte</div>
+    </div>
+  </div>
 </div>
 <div class="sim-phone-area">
 <div class="iphone">
@@ -264,7 +447,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 <div class="chh" id="chH"></div>
 <div class="cms" id="chM"></div>
 <div class="cr" id="chR"></div>
+<div class="resp-area"><textarea class="resp-input" id="respInput" placeholder="Scrivi cosa risponderesti al mittente..." rows="1"></textarea></div>
 <div class="cdc" id="chD"><div class="cdc-l">Questo messaggio e' autentico o e' una trappola?</div><div class="cdc-b"><button class="cdc-btn cdc-g" id="bT" onclick="ans(true)">Mi fido</button><button class="cdc-btn cdc-r" id="bD" onclick="ans(false)">Trappola!</button></div></div>
+<div class="segnala-wrap" id="segnalaWrap"><button class="segnala-btn" onclick="doSegnala()">SEGNALA ALLA RETE</button></div>
 </div>
 
 <div class="scr" id="sWave">
@@ -274,6 +459,23 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 <div class="hi"><div class="hi-b"></div></div>
 </div>
 </div>
+
+<!-- RIGHT PANEL: SKILLS -->
+<div class="sim-right">
+  <div class="sp-card">
+    <div class="pts-display">
+      <span class="pts-num" id="ptsNum">0</span>
+      <span class="pts-change" id="ptsChange"></span>
+    </div>
+    <div class="pts-label">punti</div>
+    <div class="streak-bar">Serie: <strong id="streakNum">0</strong> corrette consecutive</div>
+  </div>
+  <div class="sp-card">
+    <div class="sp-title">Skills in costruzione</div>
+    <div id="skillList"></div>
+  </div>
+</div>
+
 </div>
 </div>
 
@@ -295,11 +497,33 @@ const IMGS=["data:image/jpeg;base64,/9j/4Q/+RXhpZgAATU0AKgAAAAgABgESAAMAAAABAAEA
 const S=[["Zia Maria", "ZM", "#6c5ce7", "10:32", "Ciao tesoro! Puoi votare per Federica? E' la figlia della mia amica. Partecipa a un concorso di danza e con il tuo voto puo' vincere una borsa di studio gratuita!\n{{link:https://concorso-vot1.pro/final3}}", false, "Phishing: truffa della ballerina", "La classica truffa della ballerina. Dominio inventato, leva emotiva su una bambina, gratuita' dichiarata. Zia Maria e' stata hackerata."], ["Mamma", "MA", "#fd79a8", "10:45", "Compra il latte e il pane quando torni, li ho finiti. Grazie tesoro!", true, "Messaggio autentico", "Nessun link, nessuna richiesta sospetta. Una richiesta pratica e quotidiana, coerente col personaggio."], ["Marco", "MC", "#e17055", "11:05", "Ehi ma questa sei tu nella foto?? Guarda!\n{{link:https://ch3ck-foto.me/img29571}}", false, "Phishing: curiosita' + link", "La curiosita' personale e' un'esca potentissima. Il dominio ch3ck-foto.me ha il 3 al posto della e. Marco e' stato hackerato."], ["Prof.ssa Bianchi", "PB", "#00cec9", "11:20", "Buongiorno ragazzi, ricordatevi di portare il libro di scienze domani. Facciamo il laboratorio sulle cellule!", true, "Messaggio autentico", "Informazione scolastica pratica, nessun link, tono coerente col ruolo."], ["Cugino Luca", "CL", "#0984e3", "11:35", "Ciao, sei li? Ho un'emergenza grossa. Mi hanno rubato il portafoglio. Mi puoi mandare 150 euro? Ti ridai tutto domani.\nIBAN: IT04X0542811101000000123456", false, "Estorsione post-furto account", "Richiesta di soldi urgente con IBAN gia' pronto. L'account di Luca e' stato rubato e il truffatore scrive a tutti i contatti."], ["Paolo", "PA", "#00b894", "12:00", "Hai fatto i compiti di mate? Non capisco l'esercizio 3 a pagina 47. Mi aiuti?", true, "Messaggio autentico", "Richiesta specifica e concreta sui compiti, nessun link, contesto scolastico coerente."], ["Chiara", "CH", "#e84393", "12:15", "Aiuto!! Hanno hackerato il mio profilo Instagram! Per recuperarlo devo verificare da piu' account, clicca qui per favore:\n{{link:https://ig-recovery-help.com/verify}}", false, "Phishing: finto recupero account", "Nessun social network chiede di 'verificare da altri account'. Dominio falso. L'account di Chiara e' compromesso."], ["Papa'", "PP", "#2d3436", "12:30", "Arrivo tra 10 minuti a prenderti. Aspettami davanti all'ingresso.", true, "Messaggio autentico", "Messaggio pratico e breve, nessuna richiesta anomala, contesto quotidiano."], ["Zio Roberto", "ZR", "#636e72", "12:45", "Ciao, potresti votare per mia nipote Sofia? Recita in uno spettacolo teatrale e vorrebbe ottenere il ruolo principale. Ci metti un secondo!\n{{link:https://baldancig.top/?voite=sofiay}}", false, "Phishing: variante ballerina", "Stessa struttura della truffa della ballerina ma con variante teatrale. Il dominio baldancig.top e' identico a quello degli screenshot reali."], ["Nonna Rosa", "NR", "#a29bfe", "13:00", "Come si fa a mandare una foto su WhatsApp? Non mi ricordo piu'. Quando vieni me lo fai vedere?", true, "Messaggio autentico", "Domanda semplice, nessun link, coerente con il personaggio. Non tutto e' una truffa!"], ["Sofia", "SO", "#fab1a0", "13:15", "Ho trovato un lavoretto facilissimo online! Bastano 10 minuti al giorno e guadagni tipo 50 euro! Guarda qui:\n{{link:https://easy-job24.click/start}}", false, "Phishing: offerta di lavoro falsa", "I lavori facili e ben pagati online non esistono. Questo schema raccoglie dati personali. L'account di Sofia e' compromesso."], ["Marco", "MC", "#e17055", "13:30", "A che ora ci vediamo al campetto oggi? Io porto il pallone.", true, "Messaggio autentico", "Proposta concreta senza link. Tono informale coerente con un amico."], ["Laura (sorella)", "LA", "#74b9ff", "13:45", "Mamma ha detto che stasera facciamo pizza! Tu che gusto vuoi?", true, "Messaggio autentico", "Messaggio familiare quotidiano, nessuna anomalia."], ["Mamma", "MA", "#fd79a8", "14:00", "Mi e' arrivato per sbaglio un codice sul tuo numero, me lo mandi? E' di 6 cifre. Mi serve subito!", false, "Furto codice di verifica", "Un codice di verifica non arriva MAI per sbaglio a un altro numero. Questo e' il tentativo diretto di rubare il tuo account WhatsApp. NON condividere MAI codici con nessuno."], ["Compagno Leonardo", "LE", "#fdcb6e", "14:15", "Domani interrogazione di storia, lo sapevi? La prof ha detto capitolo 7 e 8.", true, "Messaggio autentico", "Informazione scolastica utile e concreta, nessun link sospetto."], ["Coach Davide", "CD", "#d63031", "14:30", "Ragazzi compilate questo modulo per la gara di sabato, chi non compila non gioca:\n{{link:https://form-iscriz1one.site/torneo2026}}", false, "Phishing: autorita' + urgenza", "Dominio sospetto con 1 al posto della i. Un allenatore vero userebbe la piattaforma ufficiale della societa' sportiva."], ["Nonno Piero", "NP", "#b8e994", "14:45", "Auguri di buon compleanno nipote mio! Ti ho messo una sorpresa nella busta che ti ho dato ieri. Spero ti piaccia!", true, "Messaggio autentico", "Messaggio affettuoso e concreto, riferimento a evento reale, nessun link."], ["Sig.ra Rossi", "SR", "#dfe6e9", "15:00", "Ciao caro, ho trovato il vostro gatto in giardino mio. Venite a prenderlo quando potete!", true, "Messaggio autentico", "Messaggio di vicinato, informazione pratica, nessuna richiesta anomala."], ["Paolo", "PA", "#00b894", "15:15", "INDOVINA?? Ho vinto 2 biglietti per il concerto e uno e' per te! Registrati qui per il tuo:\n{{link:https://regalo-ticket.com/claim}}\nScade tra 1 ora!", false, "Phishing: premio finto", "Nessuno vince biglietti da regalare via link. La scadenza di 1 ora blocca la riflessione. Account compromesso."], ["Zia Maria", "ZM", "#6c5ce7", "15:30", "Ci vediamo domenica per il pranzo? Porto la crostata! Confermatemi entro venerdi'.", true, "Messaggio autentico", "Stessa Zia Maria, ma stavolta e' un messaggio vero: pratico, senza link, coerente."], ["Marco", "MC", "#e17055", "15:45", "Guarda questo video pazzesco, non ci crederai:\n{{link:https://vid-viral.top/watch392}}", false, "Phishing: video virale falso", "I video veri si condividono direttamente come file o da YouTube, non con link a domini sconosciuti."], ["Sofia", "SO", "#fab1a0", "16:00", "Mi presti il quaderno di italiano domani? Mi mancano gli appunti dell'ultima lezione.", true, "Messaggio autentico", "Richiesta scolastica concreta, nessun link, contesto quotidiano."], ["Nonna Rosa", "NR", "#a29bfe", "16:15", "Mi hanno detto che devo aggiornare WhatsApp o smette di funzionare. Clicca qui per aggiornare anche tu:\n{{link:https://wa-update-2026.com/install}}", false, "Phishing: finto aggiornamento", "WhatsApp si aggiorna SOLO dallo store ufficiale (App Store/Play Store), MAI da link esterni. L'account della nonna e' stato compromesso."], ["Chiara", "CH", "#e84393", "16:30", "Hai visto l'ultimo episodio della serie? Non spoilerarmi pero' che sono rimasta indietro!", true, "Messaggio autentico", "Conversazione informale tra amiche, nessuna richiesta anomala."], ["Cugino Luca", "CL", "#0984e3", "16:45", "Hai ancora quel gioco della PS che mi avevi detto? Me lo porti quando ci vediamo?", true, "Messaggio autentico", "Riferimento a conversazione precedente, richiesta concreta, nessun link."], ["Papa'", "PP", "#2d3436", "17:00", "Non usare il tablet stasera, mi serve per una videocall di lavoro. Grazie!", true, "Messaggio autentico", "Richiesta pratica e quotidiana, tono coerente, nessun link."], ["Compagno Leonardo", "LE", "#fdcb6e", "17:15", "Ti sfido su questo gioco pazzesco! Entra dalla mia squadra:\n{{link:https://play-game-now.xyz/join}}", false, "Phishing: gioco online falso", "Il dominio .xyz e' spesso usato per truffe. I giochi legittimi hanno i loro canali ufficiali. Account compromesso."], ["Zio Roberto", "ZR", "#636e72", "17:30", "Ragazzi ho scoperto un modo per guadagnare investendo in criptovalute! Guadagno 500 euro al giorno! Provate:\n{{link:https://crypto-guadagno.pro/start}}", false, "Phishing: truffa investimenti", "Nessun investimento garantisce guadagni fissi. Schema classico di truffa finanziaria, anche da account hackerati."], ["Prof.ssa Bianchi", "PB", "#00cec9", "17:45", "Bravi ragazzi, il progetto sulle cellule e' venuto molto bene! Lunedi' lo presentiamo alla classe.", true, "Messaggio autentico", "Feedback positivo da insegnante, contesto scolastico, nessun link."], ["Laura (sorella)", "LA", "#74b9ff", "18:00", "Guarda, c'e' un sondaggio e se lo fai ti regalano una gift card Spotify!\n{{link:https://free-spotify-gift.net/claim}}", false, "Phishing: gift card falsa", "I sondaggi che regalano gift card sono sempre truffe. Spotify non distribuisce buoni tramite link su WhatsApp."], ["Mamma", "MA", "#fd79a8", "18:15", "Non dimenticare la merenda per domani. Ho lasciato i biscotti sul tavolo della cucina.", true, "Messaggio autentico", "Messaggio pratico e quotidiano, zero richieste anomale."], ["Sig.ra Rossi", "SR", "#dfe6e9", "18:30", "Ciao, c'e' un pacco per voi che il corriere ha lasciato da me. Ma dice che dovete confermare la consegna qui:\n{{link:https://tracking-pacco.info/conferma}}", false, "Phishing: pacco finto", "I corrieri non chiedono conferme via WhatsApp attraverso vicini di casa. Schema molto diffuso nel 2026."], ["Paolo", "PA", "#00b894", "18:45", "Ti mando la foto del compito che ti sei perso. L'ho fatta col telefono, se non si legge dimmelo.", true, "Messaggio autentico", "Aiuto concreto tra compagni, riferimento a evento reale, nessun link."], ["Nonno Piero", "NP", "#b8e994", "19:00", "Mi hanno scritto dalla banca che devo aggiornare i dati. Mi aiuti? Ecco il messaggio:\n{{link:https://sicurezza-bancaria.info/aggiorna}}", false, "Phishing: finto messaggio bancario", "Le banche non mandano link via WhatsApp. Il nonno ha ricevuto una truffa e la sta inoltrando inconsapevolmente."], ["Marco", "MC", "#e17055", "19:15", "Vengo a casa tua dopo scuola domani? Cosi' studiamo insieme per la verifica.", true, "Messaggio autentico", "Proposta di studio tra amici, nessun elemento sospetto."], ["Chiara", "CH", "#e84393", "19:30", "Vota la mia foto per il contest di Instagram! Devi entrare da questo link:\n{{link:https://ig-vote-contest.pro/photo189}}", false, "Phishing: finto contest social", "I contest di Instagram si gestiscono DENTRO Instagram, non con link esterni. Dominio sospetto."], ["Nonna Rosa", "NR", "#a29bfe", "19:45", "Ti ho preparato la torta di mele! Vieni a prenderla domani pomeriggio quando esci da scuola.", true, "Messaggio autentico", "Invito concreto e affettuoso, nessun link, coerente col personaggio."], ["Zia Maria", "ZM", "#6c5ce7", "20:00", "Guarda che bel video di quando eri piccola! Me l'ha mandato tua mamma!\n{{link:https://media-share.top/video/famiglia}}", false, "Phishing: video falso + leva emotiva", "I video familiari si mandano direttamente su WhatsApp come file, non con link a siti esterni. Dominio sospetto."], ["Coach Davide", "CD", "#d63031", "20:15", "Allenamento spostato alle 17:00 per via del campo occupato. Portate i parastinchi.", true, "Messaggio autentico", "Comunicazione organizzativa concreta, nessun link, informazione pratica."], ["Sofia", "SO", "#fab1a0", "20:30", "Che zaino hai preso per la gita di giovedi'? Io non so se portare quello grande o quello piccolo.", true, "Messaggio autentico", "Domanda pratica tra compagne, contesto scolastico, nessun link."], ["Cugino Luca", "CL", "#0984e3", "20:45", "Condividi questo messaggio a 10 contatti oppure WhatsApp diventa a pagamento da domani!! E' ufficiale!\n{{link:https://wa-gratis.club/condividi}}", false, "Catena + phishing", "WhatsApp non diventera' a pagamento e non manda ultimatum via catena. Classica bufala usata per diffondere link malevoli."], ["Papa'", "PP", "#2d3436", "21:00", "Buonanotte! Domani sveglia alle 7. Ho messo la sveglia anche sul tuo telefono.", true, "Messaggio autentico", "Messaggio serale affettuoso e pratico, nessuna anomalia."], ["Prof.ssa Bianchi", "PB", "#00cec9", "21:15", "URGENTE: compilate questo questionario INVALSI entro stasera o non potrete fare l'esame!\n{{link:https://invalsi-compilazione.site/modulo}}", false, "Phishing: urgenza + autorita' scolastica", "L'INVALSI non si compila via link WhatsApp. Il dominio e' falso. L'account della professoressa e' stato compromesso."], ["Laura (sorella)", "LA", "#74b9ff", "21:30", "Metti like alla mia amica Sara su TikTok! Ha bisogno di followers:\n{{link:https://tiktok-boost.pro/sarastar}}", false, "Phishing: finto boost social", "TikTok non funziona con link esterni per dare like. Schema di raccolta dati personali."], ["Nonno Piero", "NP", "#b8e994", "21:45", "Buonanotte caro! Domani vengo a vederti alla recita della scuola. Sono proprio contento!", true, "Messaggio autentico", "Messaggio affettuoso e concreto, riferimento a evento reale, nessun link."], ["Sig.ra Rossi", "SR", "#dfe6e9", "08:00", "Buongiorno! Vota per il mio gatto Briciola al concorso di animali piu' belli. E' facile e gratuito!\n{{link:https://pet-contest-vote.pro/briciola}}", false, "Phishing: variante ballerina con animale", "Stesso schema della ballerina: voto + gratuita' + link sospetto. Cambia solo il soggetto (gatto invece di bambina)."], ["Mamma", "MA", "#fd79a8", "08:15", "Ho messo i soldi per la mensa nel tuo diario. Non perderli!", true, "Messaggio autentico", "Messaggio pratico, riferimento concreto, nessuna anomalia."], ["Compagno Leonardo", "LE", "#fdcb6e", "08:30", "Scarica questa app, e' tipo Minecraft ma gratis e senza pubblicita'! Non e' sullo store, la trovi qui:\n{{link:https://games-apk-free.xyz/download}}", false, "Malware: app fuori dallo store", "Le app legittime si trovano SOLO sugli store ufficiali. Scaricare file .apk da link sconosciuti puo' installare malware sul dispositivo."], ["Sofia", "SO", "#fab1a0", "08:45", "Oggi pomeriggio vieni a studiare da me? La mamma ha detto che va bene.", true, "Messaggio autentico", "Invito concreto con dettaglio (la mamma ha confermato), nessun link, contesto quotidiano."], ["Zia Maria", "ZM", "#6c5ce7", "09:00", "Ciao Padre! Se ti va, potresti dare un voto a Francesca? E' la figlia di amici cari e per lei sarebbe davvero importante. Il premio e' un corso di danza gratuito.\n{{link:https://ditropicroma.pro/home/final1}}", false, "Phishing: truffa della ballerina (reale)", "Questo messaggio e' IDENTICO agli screenshot reali mostrati all'inizio. Stesso dominio ditropicroma.pro. Ultima verifica: lo riconosci adesso?"]];
 
 // Init images
-document.getElementById('exi1').src=IMGS[0];
-document.getElementById('exi2').src=IMGS[1];
+document.getElementById('exi1').src=IMGS[1];
 
 // Lightbox
 function lbOpen(i){document.getElementById('lbi').src=IMGS[i];document.getElementById('lb').classList.add('open');}
+
+// ═══ ANALYSIS STEPPER ═══
+let anCur=0;const AN_TOTAL=7;
+function initAnStepper(){
+  const dots=document.getElementById('anDots');dots.innerHTML='';
+  for(let i=0;i<AN_TOTAL;i++){const d=document.createElement('div');d.className='an-dot'+(i===0?' active':'');dots.appendChild(d);}
+}
+function anStep(dir){
+  anCur=Math.max(0,Math.min(AN_TOTAL-1,anCur+dir));
+  document.querySelectorAll('.an-slide').forEach((s,i)=>s.classList.toggle('active',i===anCur));
+  document.querySelectorAll('.an-dot').forEach((d,i)=>d.classList.toggle('active',i===anCur));
+  document.getElementById('anPrev').disabled=anCur===0;
+  const nb=document.getElementById('anNext');
+  if(anCur>=AN_TOTAL-1){nb.style.display='none';document.getElementById('anStartBtn').style.display='block';}
+  else{nb.style.display='';document.getElementById('anStartBtn').style.display='none';}
+}
+initAnStepper();
+
+// ═══ SEGNALA ═══
+function doSegnala(){
+  const w=document.getElementById('segnalaWrap');
+  w.innerHTML='<div class="segnala-done">Segnalazione inviata ai tuoi contatti e alla Polizia Postale.</div>';
+}
 
 // Navigation
 function go(id){var vf=document.querySelector('#pgVideo iframe');if(vf)vf.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}','*');document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
@@ -308,22 +532,74 @@ function go(id){var vf=document.querySelector('#pgVideo iframe');if(vf)vf.conten
 function ck(){const n=new Date();document.getElementById('clock').textContent=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');}
 ck();setInterval(ck,30000);
 
+// ═══ SKILLS & CLASSIFICATION ═══
+const SKILLS=[
+  {id:'dom',name:'Domini sospetti',color:'#c0392b',max:0,pts:0},
+  {id:'emo',name:'Leva emotiva',color:'#e67e22',max:0,pts:0},
+  {id:'cod',name:'Codici e password',color:'#8e44ad',max:0,pts:0},
+  {id:'urg',name:'Urgenza artificiale',color:'#d35400',max:0,pts:0},
+  {id:'lnk',name:'Link sospetti',color:'#2980b9',max:0,pts:0},
+  {id:'den',name:'Richieste di denaro',color:'#c0392b',max:0,pts:0},
+  {id:'ver',name:'Verifica mittente',color:'#16a085',max:0,pts:0},
+  {id:'aut',name:'Messaggi autentici',color:'#1a7a5a',max:0,pts:0},
+];
+// Map scenario type keywords to skills + classification
+function getSkills(s){
+  const t=s[6].toLowerCase(),txt=s[4].toLowerCase();
+  const sk=[];
+  if(!s[5]) sk.push('ver'); // all traps test sender verification
+  if(s[5]) sk.push('aut'); // all safe test authentic recognition
+  if(txt.includes('{{link:')) sk.push('lnk');
+  if(t.includes('ballerina')||t.includes('emotiv')||t.includes('contest')||t.includes('animale')) sk.push('emo');
+  if(txt.includes('dominio')||txt.includes('.pro')||txt.includes('.top')||txt.includes('.xyz')||txt.includes('.site')||txt.includes('.click')||txt.includes('.club')||txt.includes('.me')||txt.includes('.net')||txt.includes('.info')) sk.push('dom');
+  if(t.includes('codice')||txt.includes('6 cifre')) sk.push('cod');
+  if(t.includes('urgenz')||txt.includes('subito')||txt.includes('entro stasera')||txt.includes('1 ora')) sk.push('urg');
+  if(txt.includes('euro')||txt.includes('iban')||txt.includes('soldi')) sk.push('den');
+  return[...new Set(sk)];
+}
+function getClassification(s){
+  const t=s[6];
+  if(s[5]) return{cat:'Comunicazione autentica',desc:'Messaggio genuino da un contatto reale. Nessun segnale di allarme presente.',risk:'Nessuno. Ma allenare il riconoscimento dei messaggi sicuri e\' fondamentale per non bloccare tutto per paura.',cls:'cc-safe'};
+  if(t.includes('codice')) return{cat:'Furto di credenziali',desc:'Il truffatore chiede direttamente il codice di verifica WhatsApp per impossessarsi del tuo account.',risk:'Perdita totale dell\'account. Il truffatore legge le tue chat, scrive a tutti i tuoi contatti e puo\' chiedere soldi a tuo nome.',cls:'cc-trap'};
+  if(t.includes('Estorsione')) return{cat:'Estorsione finanziaria',desc:'Dopo aver rubato un account, il truffatore chiede soldi ai contatti della vittima fingendo emergenze.',risk:'Perdita economica diretta. I soldi inviati tramite IBAN sono quasi impossibili da recuperare.',cls:'cc-trap'};
+  if(t.includes('Malware')) return{cat:'Distribuzione malware',desc:'Link a file o app fuori dagli store ufficiali che installano software malevolo sul dispositivo.',risk:'Il malware puo\' spiare tutto cio\' che fai sul telefono: password, foto, messaggi, posizione GPS.',cls:'cc-trap'};
+  if(t.includes('Catena')) return{cat:'Catena virale + phishing',desc:'Messaggio che sfrutta la paura (WhatsApp a pagamento) per spingerti a condividere un link malevolo.',risk:'Diventi tu stesso il veicolo della truffa, diffondendola a tutti i tuoi contatti.',cls:'cc-trap'};
+  return{cat:'Phishing / Social engineering',desc:'Il truffatore usa un pretesto credibile per farti cliccare su un link e inserire dati personali.',risk:'Furto dell\'account WhatsApp, accesso alle chat private, uso della tua identita\' per truffe a catena.',cls:'cc-trap'};
+}
+
 // ═══ SIMULATOR STATE ═══
 const WAVE_SIZE=5, TOTAL_WAVES=10;
 let order=[],answered={},ok=0,ko=0,wave=0,cur=null;
+let points=0,streak=0,bestStreak=0;
 
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
 function startSim(){
-  // Shuffle but keep last scenario (idx 49, the ditropicroma.pro one) at the end
   let indices=[...Array(S.length-1).keys()];
   shuffle(indices);
   indices.push(S.length-1);
   order=indices;
   answered={};ok=0;ko=0;wave=0;cur=null;
+  points=0;streak=0;bestStreak=0;
+  // Reset skills
+  SKILLS.forEach(sk=>{sk.pts=0;sk.max=0;});
+  // Count max per skill
+  S.forEach(s=>{getSkills(s).forEach(sid=>{const sk=SKILLS.find(x=>x.id===sid);if(sk)sk.max++;});});
+  buildSkillList();
   go('pgSim');
   updateScores();
+  updatePoints(0);
+  document.getElementById('classCard').classList.remove('show');
   buildWave();
+}
+function buildSkillList(){
+  const el=document.getElementById('skillList');el.innerHTML='';
+  SKILLS.forEach(sk=>{
+    if(sk.max===0) return;
+    const d=document.createElement('div');d.className='skill-item';d.id='sk-'+sk.id;
+    d.innerHTML='<div class="sk-icon" style="background:'+sk.color+'">'+sk.id.substring(0,2).toUpperCase()+'</div><div class="sk-info"><div class="sk-name">'+sk.name+'</div><div class="sk-bar-wrap"><div class="sk-bar" style="width:0%;background:'+sk.color+'"></div></div></div><div class="sk-pts" id="skp-'+sk.id+'">0/'+sk.max+'</div>';
+    el.appendChild(d);
+  });
 }
 
 function waveIndices(){return order.slice(wave*WAVE_SIZE, (wave+1)*WAVE_SIZE);}
@@ -354,6 +630,14 @@ function showScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.re
 
 function openC(idx){
   cur=idx;const s=S[idx];hideEfb();
+  // Show classification
+  const cl=getClassification(s);
+  const cc=document.getElementById('classCard');cc.classList.add('show');
+  document.getElementById('ccType').textContent=s[6];
+  document.getElementById('ccType').className='cc-type '+cl.cls;
+  document.getElementById('ccCat').textContent=cl.cat;
+  document.getElementById('ccDesc').textContent=cl.desc;
+  document.getElementById('ccRiskText').textContent=cl.risk;
   document.getElementById('chH').innerHTML=`<button class="chb" onclick="closeC()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="cha" style="background:${s[2]}">${s[1]}</div><div class="chi"><div class="chi-n">${s[0]}</div><div class="chi-s">online</div></div>`;
   const mc=document.getElementById('chM');mc.innerHTML='';
   // Parse messages: split by \n, handle links
@@ -378,6 +662,9 @@ function openC(idx){
   document.getElementById('chD').style.display='block';
   document.getElementById('bT').disabled=false;
   document.getElementById('bD').disabled=false;
+  document.getElementById('respInput').value='';
+  document.getElementById('segnalaWrap').classList.remove('show');
+  document.getElementById('segnalaWrap').innerHTML='<button class="segnala-btn" onclick="doSegnala()">SEGNALA ALLA RETE</button>';
   const r=document.getElementById('chR');r.className='cr';r.style.display='none';
   showScr('sChat');
 }
@@ -395,7 +682,14 @@ function ans(trusted){
   if(cur===null)return;
   const s=S[cur];const safe=s[5];const correct=(trusted===safe);
   answered[cur]=correct;
-  if(correct)ok++;else ko++;
+  if(correct){ok++;streak++;if(streak>bestStreak)bestStreak=streak;updatePoints(10+(streak>=3?5:0));}
+  else{ko++;streak=0;updatePoints(-5);}
+  // Update skills
+  const sks=getSkills(s);
+  sks.forEach(sid=>{
+    const sk=SKILLS.find(x=>x.id===sid);
+    if(sk&&correct){sk.pts++;updateSkillBar(sk);}
+  });
   updateScores();
   document.getElementById('bT').disabled=true;
   document.getElementById('bD').disabled=true;
@@ -404,8 +698,10 @@ function ans(trusted){
   r.textContent=correct?(safe?'Corretto: messaggio autentico':'Esatto: era una trappola!'):(safe?'Errore: era autentico':'Errore: era una trappola!');
   r.style.display='block';
   document.getElementById('chD').style.display='none';
+  // Show segnala for traps correctly identified
+  if(correct && !safe){document.getElementById('segnalaWrap').classList.add('show');}
   showEfb(s,correct);
-  setTimeout(closeC,2800);
+  setTimeout(closeC,3200);
 }
 
 function showEfb(s,ok2){
@@ -414,6 +710,22 @@ function showEfb(s,ok2){
   el.innerHTML=`<div class="etag">${s[6]}</div><h4>${ok2?'Risposta corretta!':'Ti ha fregato.'}</h4><p>${s[7]}</p>`;
 }
 function hideEfb(){document.getElementById('efb').className='efb';}
+
+function updatePoints(delta){
+  points=Math.max(0,points+delta);
+  document.getElementById('ptsNum').textContent=points;
+  document.getElementById('streakNum').textContent=streak;
+  const pc=document.getElementById('ptsChange');
+  pc.textContent=(delta>0?'+':'')+delta;
+  pc.className='pts-change '+(delta>0?'plus':'minus');
+  setTimeout(()=>{pc.className='pts-change';},1200);
+}
+function updateSkillBar(sk){
+  const bar=document.querySelector('#sk-'+sk.id+' .sk-bar');
+  const lbl=document.getElementById('skp-'+sk.id);
+  if(bar)bar.style.width=Math.round(sk.pts/sk.max*100)+'%';
+  if(lbl)lbl.textContent=sk.pts+'/'+sk.max;
+}
 
 function updateScores(){
   document.getElementById('scOk').textContent=ok;
