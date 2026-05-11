@@ -92,15 +92,36 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* Checkbox gate */
 .chk-gate{margin-top:8px;}
-.cg-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);}
+.cg-item{display:flex;align-items:flex-start;gap:8px;padding:8px 0;cursor:pointer;user-select:none;border-bottom:1px solid var(--border);transition:opacity .25s;position:relative;}
 .cg-item:last-child{border-bottom:none;}
 .cg-box{width:16px;height:16px;border-radius:4px;border:2px solid #bbb;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .cg-item.checked .cg-box{background:var(--success);border-color:var(--success);}
 .cg-item.checked .cg-box::after{content:'';width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px);display:block;}
-.cg-text{font-size:0.72rem;line-height:1.45;color:var(--muted);}
+.cg-text{font-size:0.74rem;line-height:1.45;color:var(--muted);flex:1;min-width:0;}
 .cg-item.checked .cg-text{color:var(--text);}
+.cg-icon{flex-shrink:0;width:18px;height:18px;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.cg-icon svg{width:16px;height:16px;display:none;}
+/* STATO: locked (testo nascosto, in attesa del proprio turno) */
+.cg-item.locked{cursor:default;opacity:.45;}
+.cg-item.locked .cg-text{color:transparent;background:linear-gradient(90deg,rgba(0,0,0,0.04) 0%,rgba(0,0,0,0.10) 50%,rgba(0,0,0,0.04) 100%);background-size:200% 100%;animation:cgSkel 1.8s linear infinite;border-radius:4px;min-height:14px;}
+.cg-item.locked .cg-box{border-color:#ddd;background:#f5f5f5;}
+/* STATO: playing (sto leggendo - icona altoparlante che pulsa) */
+.cg-item.playing{cursor:default;background:var(--accent-light);margin:0 -10px;padding-left:10px;padding-right:10px;border-radius:6px;border-bottom-color:transparent;}
+.cg-item.playing .cg-text{color:var(--text);font-weight:500;}
+.cg-item.playing .cg-icon-speaker{display:block;color:var(--accent);animation:cgPulse 0.9s ease-in-out infinite;}
+.cg-item.playing .cg-box{border-color:#bbb;}
+/* STATO: ready (audio finito, puoi cliccare) */
+.cg-item.ready{cursor:pointer;}
+.cg-item.ready .cg-text{color:var(--text);}
+.cg-item.ready .cg-box{border-color:var(--accent);box-shadow:0 0 0 0 rgba(26,122,90,0.5);animation:cgReady 1.4s ease-in-out infinite;}
+.cg-item.ready:hover .cg-box{background:rgba(26,122,90,0.08);}
+.cg-item.checked .cg-icon-check{display:block;color:var(--success);}
 .chk-gate-msg{font-size:0.65rem;color:var(--danger);text-align:center;margin-top:6px;font-weight:600;}
 .chk-gate-msg.done{color:var(--success);}
+.chk-gate-msg.listening{color:var(--accent);font-weight:500;}
+@keyframes cgSkel{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+@keyframes cgPulse{0%,100%{opacity:.45;transform:scale(1);}50%{opacity:1;transform:scale(1.18);}}
+@keyframes cgReady{0%,100%{box-shadow:0 0 0 0 rgba(26,122,90,0.5);}50%{box-shadow:0 0 0 5px rgba(26,122,90,0);}}
 
 /* Glossary popup */
 .gloss-overlay{display:none;position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;}
@@ -120,6 +141,42 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .gloss-close.locked{background:var(--border);color:var(--muted);cursor:not-allowed;}
 .gloss-close.unlocked{background:var(--accent);color:#fff;}
 .gloss-close.unlocked:hover{filter:brightness(1.1);}
+
+/* Gloss tags (scaffolding lessicale) */
+.gloss-tags-label{font-size:0.72rem;font-weight:600;color:var(--text);margin:14px 0 6px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.gloss-tags-label .gtl-count{font-family:var(--mono);font-size:0.68rem;color:var(--muted);font-weight:500;}
+.gloss-tags-label .gtl-count strong{color:var(--accent);font-weight:700;}
+.gloss-tags-hint{font-size:0.68rem;color:var(--muted);margin-bottom:8px;line-height:1.45;font-style:italic;}
+.gloss-tags{display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--bg);border-radius:8px;border:1px dashed var(--border);min-height:44px;align-items:center;}
+.gtag{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:14px;font-size:0.72rem;font-weight:500;background:#fff;border:1.5px solid var(--border);color:var(--muted);transition:all .25s cubic-bezier(.2,.8,.2,1);font-family:var(--font);}
+.gtag.active{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(1.04);box-shadow:0 2px 8px rgba(26,122,90,0.25);}
+.gtag.active::before{content:'';width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block;}
+
+/* ═══ LOGIN MODAL ═══ */
+.login-overlay{position:fixed;inset:0;z-index:10000;background:linear-gradient(135deg,#f4f2ef 0%,#eae7e2 100%);display:flex;align-items:center;justify-content:center;padding:24px;animation:fu .4s ease;}
+.login-overlay.hidden{display:none;}
+.login-card{max-width:440px;width:100%;background:var(--bg2);border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,0.10),0 2px 6px rgba(0,0,0,0.04);padding:36px 32px;border:1px solid var(--border);}
+.login-logo{width:52px;height:52px;border-radius:14px;background:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+.login-logo svg{width:30px;height:30px;fill:#fff;}
+.login-eyebrow{font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.login-title{font-size:1.55rem;font-weight:700;line-height:1.15;margin-bottom:8px;color:var(--text);}
+.login-sub{font-size:0.88rem;line-height:1.55;color:var(--muted);margin-bottom:24px;}
+.login-field{margin-bottom:14px;}
+.login-label{display:block;font-size:0.74rem;font-weight:600;color:var(--text);margin-bottom:6px;}
+.login-input,.login-select{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:var(--font);font-size:0.92rem;background:var(--bg2);color:var(--text);outline:none;transition:border-color .2s;}
+.login-input:focus,.login-select:focus{border-color:var(--accent);}
+.login-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235c6370' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;padding-right:36px;}
+.login-error{font-size:0.72rem;color:var(--danger);margin-top:4px;min-height:14px;}
+.login-btn{width:100%;padding:14px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-family:var(--font);font-size:0.95rem;font-weight:600;cursor:pointer;margin-top:8px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.login-btn:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 18px rgba(26,122,90,0.22);}
+.login-btn svg{width:18px;height:18px;}
+.login-footer{font-size:0.68rem;color:var(--muted);text-align:center;margin-top:18px;line-height:1.5;}
+.student-badge{position:fixed;top:60px;right:20px;z-index:880;background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:5px 12px 5px 6px;display:flex;align-items:center;gap:8px;font-size:0.72rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+.student-badge.hidden{display:none;}
+.sb-avatar{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.7rem;}
+.sb-info{line-height:1.2;}
+.sb-info strong{color:var(--text);font-weight:600;}
+.sb-info span{color:var(--muted);font-size:0.62rem;}
 
 /* Skill item clickable */
 .skill-item{cursor:pointer;transition:all .2s;border-radius:6px;padding:6px 4px;}
@@ -378,6 +435,29 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .chain-tts-btn.playing{background:var(--accent);color:#fff;}
 .chain-tts-btn svg{width:15px;height:15px;}
 .chain-next{margin-top:8px;}
+
+/* ═══ BOTTONE TERMINA ANTICIPATO ═══ */
+.sim-end-wrap{margin-top:22px;padding-top:18px;border-top:1px dashed var(--border);display:flex;flex-direction:column;align-items:center;gap:6px;}
+.sim-end-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border:1.5px solid var(--danger);border-radius:10px;background:transparent;color:var(--danger);font-family:var(--font);font-size:0.84rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.sim-end-btn:hover{background:var(--danger);color:#fff;box-shadow:0 4px 14px rgba(192,57,43,0.22);}
+.sim-end-btn svg{width:14px;height:14px;}
+.sim-end-note{font-size:0.66rem;color:var(--muted);font-style:italic;letter-spacing:0.02em;}
+
+/* ═══ MODAL CONFERMA TERMINAZIONE ═══ */
+.end-confirm-overlay{display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:24px;animation:fu .25s ease;}
+.end-confirm-overlay.open{display:flex;}
+.end-confirm-box{background:var(--bg2);border-radius:16px;padding:32px 30px;max-width:520px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,0.25);border:1px solid var(--border);text-align:center;}
+.ecb-icon{width:64px;height:64px;border-radius:50%;background:rgba(192,57,43,0.08);border:2px solid rgba(192,57,43,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+.ecb-icon svg{width:32px;height:32px;stroke:var(--danger);}
+.ecb-title{font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:10px;}
+.ecb-text{font-size:0.95rem;line-height:1.55;color:var(--muted);margin-bottom:24px;}
+.ecb-text strong{color:var(--text);font-weight:600;}
+.ecb-buttons{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.ecb-btn{padding:12px 18px;border-radius:10px;font-family:var(--font);font-size:0.84rem;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid transparent;flex:1;min-width:200px;}
+.ecb-cancel{background:var(--bg2);border-color:var(--border);color:var(--text);}
+.ecb-cancel:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+.ecb-confirm{background:var(--danger);color:#fff;border-color:var(--danger);}
+.ecb-confirm:hover{filter:brightness(1.08);box-shadow:0 6px 18px rgba(192,57,43,0.32);transform:translateY(-1px);}
 </style>
 </head>
 <body>
@@ -397,8 +477,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="gloss-def" id="gtDef"></div>
     <div class="gloss-prompt">Riscrivi questa definizione con parole tue:</div>
     <textarea class="gloss-input" id="gtInput" placeholder="Scrivi qui cosa significa secondo te..." oninput="checkGlossInput()"></textarea>
+    <div class="gloss-tags-label">
+      <span>Concetti chiave da toccare</span>
+      <span class="gtl-count"><strong id="gtCount">0</strong> di <span id="gtNeeded">3</span> usati</span>
+    </div>
+    <div class="gloss-tags-hint">Mentre scrivi, le parole-tag qui sotto si accendono se le usi (o usi le loro forme). Devi accenderne almeno 3 per chiudere.</div>
+    <div class="gloss-tags" id="gtTags"></div>
     <div class="gloss-footer">
-      <div class="gloss-hint" id="gtHint">Scrivi almeno 15 caratteri per chiudere</div>
+      <div class="gloss-hint" id="gtHint">Usa almeno 3 concetti chiave</div>
       <button class="gloss-close locked" id="gtClose" onclick="closeGloss()">Ho capito</button>
     </div>
   </div>
@@ -602,6 +688,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 <div class="hi"><div class="hi-b"></div></div>
 </div>
+
+<!-- BOTTONE TERMINA ANTICIPATO (sotto lo smartphone, separato) -->
+<div class="sim-end-wrap">
+  <button class="sim-end-btn" onclick="requestEnd()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+    Termina e ricevi il feedback
+  </button>
+  <div class="sim-end-note">Da usare solo quando l'insegnante lo chiede</div>
+</div>
+
 </div>
 
 <!-- RIGHT PANEL: SKILLS -->
@@ -864,17 +960,6 @@ function doSegnala(){
   const w=document.getElementById('segnalaWrap');
   w.innerHTML='<div class="segnala-done">Segnalazione inviata ai tuoi contatti e alla Polizia Postale.</div>';
 }
-function checkGate(){
-  const items=document.querySelectorAll('#chkGate .cg-item');
-  const checked=document.querySelectorAll('#chkGate .cg-item.checked');
-  const allDone=items.length>0 && checked.length===items.length;
-  document.getElementById('bT').disabled=!allDone;
-  document.getElementById('bD').disabled=!allDone;
-  if(allDone){
-    document.getElementById('chkGateMsg').textContent='Analisi completata. Ora rispondi!';
-    document.getElementById('chkGateMsg').className='chk-gate-msg done';
-  }
-}
 
 // ═══ GLOSSARY POPUP ═══
 let glossCurrent=null;
@@ -920,9 +1005,12 @@ function go(id){
   window.scrollTo(0,0);
   // Init chain alla prima visita
   if(id==='pgChain' && chainState.length===0) chainInit();
-  // Ferma il TTS se si esce da pgChain
-  if(id!=='pgChain' && window.speechSynthesis && speechSynthesis.speaking){
+  // Ferma sempre tutto il TTS in corso al cambio pagina
+  if(window.speechSynthesis && (speechSynthesis.speaking||speechSynthesis.pending)){
     speechSynthesis.cancel();
+  }
+  // Reset UI del bottone TTS della chain se si esce
+  if(id!=='pgChain'){
     const btn=document.getElementById('chainTtsBtn');
     const lbl=document.getElementById('chainTtsLabel');
     if(btn)btn.classList.remove('playing');
@@ -1043,6 +1131,103 @@ function buildWave(){
 
 function showScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
 
+// ═══ CHECK-GATE TTS STRICT (rivelazione progressiva con lettura vocale) ═══
+let chkItems=[]; // DOM elements delle caselle
+let chkCurrentIdx=0;
+let chkUtterance=null;
+
+function chkBuildGate(items){
+  chkStopTTS();
+  chkItems=[];
+  chkCurrentIdx=0;
+  const gateEl=document.getElementById('chkGate');
+  gateEl.innerHTML='';
+  items.forEach((txt,i)=>{
+    const d=document.createElement('div');
+    d.className='cg-item locked';
+    d.dataset.idx=i;
+    d.dataset.text=txt;
+    d.innerHTML=
+      '<div class="cg-box"></div>'+
+      '<div class="cg-text">'+txt+'</div>'+
+      '<div class="cg-icon">'+
+        '<svg class="cg-icon-speaker" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>'+
+        '<svg class="cg-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'+
+      '</div>';
+    d.onclick=()=>{
+      if(!d.classList.contains('ready'))return;
+      d.classList.remove('ready');
+      d.classList.add('checked');
+      chkCurrentIdx++;
+      if(chkCurrentIdx<chkItems.length){
+        chkPlayNext();
+      } else {
+        // Tutte le caselle spuntate: sblocca bottoni Mi fido / Trappola
+        document.getElementById('bT').disabled=false;
+        document.getElementById('bD').disabled=false;
+        document.getElementById('chkGateMsg').textContent='Analisi completata. Ora rispondi!';
+        document.getElementById('chkGateMsg').className='chk-gate-msg done';
+      }
+    };
+    gateEl.appendChild(d);
+    chkItems.push(d);
+  });
+  // Avvia la lettura della prima casella
+  setTimeout(chkPlayNext,250);
+}
+
+function chkPlayNext(){
+  if(chkCurrentIdx>=chkItems.length)return;
+  const d=chkItems[chkCurrentIdx];
+  d.classList.remove('locked');
+  d.classList.add('playing');
+
+  if(!window.speechSynthesis){
+    // Fallback: nessun TTS, sblocca direttamente
+    setTimeout(()=>{
+      d.classList.remove('playing');
+      d.classList.add('ready');
+    },800);
+    return;
+  }
+
+  if(speechSynthesis.speaking)speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(d.dataset.text);
+  u.lang='it-IT';
+  u.rate=0.92;
+  u.pitch=1;
+  const voices=speechSynthesis.getVoices();
+  const itVoice=voices.find(v=>v.lang && v.lang.toLowerCase().startsWith('it'));
+  if(itVoice)u.voice=itVoice;
+  u.onend=()=>{
+    if(d.classList.contains('playing')){
+      d.classList.remove('playing');
+      d.classList.add('ready');
+    }
+  };
+  u.onerror=()=>{
+    if(d.classList.contains('playing')){
+      d.classList.remove('playing');
+      d.classList.add('ready');
+    }
+  };
+  chkUtterance=u;
+  // Piccolo delay per evitare race conditions con cancel precedente
+  setTimeout(()=>{
+    // Verifica che siamo ancora sulla stessa casella (l'utente potrebbe aver chiuso la chat)
+    if(chkItems[chkCurrentIdx]===d && d.classList.contains('playing')){
+      try{speechSynthesis.speak(u);}catch(_){d.classList.remove('playing');d.classList.add('ready');}
+    }
+  },150);
+}
+
+function chkStopTTS(){
+  if(window.speechSynthesis && (speechSynthesis.speaking||speechSynthesis.pending)){
+    speechSynthesis.cancel();
+  }
+  chkUtterance=null;
+}
+
 function openC(idx){
   cur=idx;const s=S[idx];hideEfb();
   // Show classification with checkable analysis items
@@ -1050,20 +1235,14 @@ function openC(idx){
   const cc=document.getElementById('classCard');cc.classList.add('show');
   document.getElementById('ccType').textContent=s[6];
   document.getElementById('ccType').className='cc-type '+cl.cls;
-  // Build checkable items
+  // Build checkable items con TTS strict (rivelazione progressiva)
   const gateItems=[];
   gateItems.push('Tipo: '+cl.cat);
   gateItems.push(cl.desc);
   gateItems.push('Rischio: '+cl.risk);
-  const gateEl=document.getElementById('chkGate');gateEl.innerHTML='';
-  gateItems.forEach((txt,i)=>{
-    const d=document.createElement('div');d.className='cg-item';
-    d.innerHTML='<div class="cg-box"></div><div class="cg-text">'+txt+'</div>';
-    d.onclick=()=>{d.classList.toggle('checked');checkGate();};
-    gateEl.appendChild(d);
-  });
-  document.getElementById('chkGateMsg').textContent='Spunta tutti i punti per sbloccare la risposta';
-  document.getElementById('chkGateMsg').className='chk-gate-msg';
+  chkBuildGate(gateItems);
+  document.getElementById('chkGateMsg').textContent='Ascolta e analizza ogni punto';
+  document.getElementById('chkGateMsg').className='chk-gate-msg listening';
   // Disable answer buttons until all checked
   document.getElementById('bT').disabled=true;
   document.getElementById('bD').disabled=true;
@@ -1103,7 +1282,7 @@ function addBubble(mc,html,time){
   mc.appendChild(b);
 }
 
-function closeC(){cur=null;buildWave();checkWaveDone();}
+function closeC(){chkStopTTS();cur=null;buildWave();checkWaveDone();}
 
 function ans(trusted){
   if(cur===null)return;
@@ -1180,6 +1359,30 @@ function checkWaveDone(){
 
 function nextWave(){wave++;buildWave();}
 
+// ═══ TERMINAZIONE ANTICIPATA (richiesta dal docente) ═══
+function requestEnd(){
+  // Ferma TTS in corso ed eventuale stato chat aperta
+  chkStopTTS();
+  document.getElementById('endConfirmOverlay').classList.add('open');
+}
+function cancelEnd(){
+  document.getElementById('endConfirmOverlay').classList.remove('open');
+}
+function confirmEnd(){
+  document.getElementById('endConfirmOverlay').classList.remove('open');
+  // Chiudi eventuale chat aperta e va direttamente alla riflessione
+  cur=null;
+  chkStopTTS();
+  showMeta();
+}
+// Esc per annullare, Invio per confermare quando il modal è aperto
+document.addEventListener('keydown',function(e){
+  const overlay=document.getElementById('endConfirmOverlay');
+  if(!overlay||!overlay.classList.contains('open'))return;
+  if(e.key==='Escape')cancelEnd();
+  else if(e.key==='Enter')confirmEnd();
+});
+
 // ═══ METACOGNITION ═══
 const COMPETENCES=[
   "So riconoscere un dominio sospetto in un link (lettere sostituite con numeri, estensioni strane)",
@@ -1196,30 +1399,80 @@ const COMPETENCES=[
 
 function showMeta(){
   go('pgMeta');
-  const pct=Math.round(ok/S.length*100);
-  document.getElementById('msNum').textContent=ok+'/'+S.length;
-  document.getElementById('msNum').style.color=ok>=42?'var(--success)':ok>=30?'var(--accent)':'var(--danger)';
+  const analyzed=ok+ko;
+  const totalScenari=S.length;
+  const pct=analyzed>0?Math.round(ok/analyzed*100):0;
 
+  // Mostra il punteggio in forma di percentuale di accuratezza + contesto sul "quanto fatto"
+  const msNum=document.getElementById('msNum');
+  if(analyzed===0){
+    msNum.textContent='—';
+    msNum.style.color='var(--muted)';
+  } else {
+    msNum.textContent=ok+'/'+analyzed;
+    msNum.style.color=pct>=75?'var(--success)':pct>=50?'var(--accent)':'var(--danger)';
+  }
+
+  // Calcolo livello in base a PERCENTUALE di accuratezza, con gestione dei casi limite
   let lvl,col,desc;
-  if(ok>=45){lvl='Eccellente';col='var(--success)';desc='Il tuo livello di attenzione e\' molto alto. Riconosci le trappole anche nelle varianti meno ovvie e sai che un contatto fidato non garantisce un messaggio sicuro.';}
-  else if(ok>=38){lvl='Alto';col='var(--success)';desc='Hai un buon fiuto per le truffe. Qualche incertezza sulle varianti piu\' sottili, ma conosci i meccanismi fondamentali.';}
-  else if(ok>=30){lvl='Buono, con margini di crescita';col='var(--accent)';desc='Riconosci le truffe piu\' evidenti ma alcune varianti ti hanno colto di sorpresa. Rivedi i segnali d\'allarme: domini sospetti, urgenza, richieste di codici.';}
-  else if(ok>=20){lvl='Da consolidare';col='var(--danger)';desc='Le trappole di ingegneria sociale sono insidiose. Hai bisogno di esercitarti a riconoscere i segnali. Ricorda la regola VCC: Verifica, Chiama, Controlla.';}
-  else{lvl='Critico';col='var(--danger)';desc='Attenzione: molte trappole ti hanno ingannato. E\' fondamentale imparare a fermarsi e verificare PRIMA di agire. Nel dubbio, chiama sempre con una telefonata vocale.';}
+  if(analyzed===0){
+    lvl='Non hai ancora analizzato nessun messaggio';
+    col='var(--muted)';
+    desc='Hai concluso l\'attivita\' senza analizzare alcun messaggio del simulatore. Ti consigliamo di ripeterla quando avrai un po\' di tempo: bastano anche pochi scenari per cominciare a riconoscere i meccanismi delle truffe.';
+  } else if(pct>=90){
+    lvl='Eccellente';col='var(--success)';
+    desc='Hai un livello di attenzione molto alto. Riconosci le trappole anche nelle varianti meno ovvie e sai che un contatto fidato non garantisce un messaggio sicuro.';
+  } else if(pct>=75){
+    lvl='Alto';col='var(--success)';
+    desc='Hai un buon fiuto per le truffe. Qualche incertezza sulle varianti piu\' sottili, ma conosci i meccanismi fondamentali.';
+  } else if(pct>=60){
+    lvl='Buono, con margini di crescita';col='var(--accent)';
+    desc='Riconosci le truffe piu\' evidenti ma alcune varianti ti hanno colto di sorpresa. Rivedi i segnali d\'allarme: domini sospetti, urgenza, richieste di codici.';
+  } else if(pct>=40){
+    lvl='Da consolidare';col='var(--danger)';
+    desc='Le trappole di ingegneria sociale sono insidiose. Hai bisogno di esercitarti a riconoscere i segnali. Ricorda la regola VCC: Verifica, Chiama, Controlla.';
+  } else {
+    lvl='Critico';col='var(--danger)';
+    desc='Attenzione: molte trappole ti hanno ingannato. E\' fondamentale imparare a fermarsi e verificare PRIMA di agire. Nel dubbio, chiama sempre con una telefonata vocale.';
+  }
 
-  document.getElementById('mJudge').style.background=col.includes('success')?'rgba(26,122,90,0.06)':'rgba(192,57,43,0.06)';
-  document.getElementById('mJudge').style.border='1px solid '+(col.includes('success')?'rgba(26,122,90,0.15)':'rgba(192,57,43,0.15)');
-  document.getElementById('mJudge').innerHTML=`<h3 style="color:${col}">Livello di attenzione: ${lvl}</h3><p>${desc}</p>`;
+  // Nota contestuale se ha analizzato pochi messaggi (per non dare un giudizio "definitivo" su poca evidenza)
+  let contesto='';
+  if(analyzed>0 && analyzed<10){
+    contesto='<p style="margin-top:10px;font-size:0.78rem;font-style:italic;color:var(--muted);">Hai analizzato <strong>'+analyzed+' messaggi su '+totalScenari+'</strong>: il giudizio qui sopra e\' indicativo, basato su pochi dati. Per una valutazione piu\' solida servirebbe affrontarne di piu\'.</p>';
+  } else if(analyzed>0){
+    contesto='<p style="margin-top:10px;font-size:0.78rem;color:var(--muted);">Hai analizzato <strong>'+analyzed+' messaggi su '+totalScenari+'</strong>.</p>';
+  }
+
+  document.getElementById('mJudge').style.background=col.includes('success')?'rgba(26,122,90,0.06)':col.includes('muted')?'rgba(0,0,0,0.03)':'rgba(192,57,43,0.06)';
+  document.getElementById('mJudge').style.border='1px solid '+(col.includes('success')?'rgba(26,122,90,0.15)':col.includes('muted')?'rgba(0,0,0,0.08)':'rgba(192,57,43,0.15)');
+  document.getElementById('mJudge').innerHTML='<h3 style="color:'+col+'">Livello di attenzione: '+lvl+'</h3><p>'+desc+'</p>'+contesto;
 
   const cl=document.getElementById('chkList');cl.innerHTML='';
   COMPETENCES.forEach((c,i)=>{
     const d=document.createElement('div');d.className='chk-item';
-    d.innerHTML=`<div class="chk-box"></div><div class="chk-text">${c}</div>`;
+    d.innerHTML='<div class="chk-box"></div><div class="chk-text">'+c+'</div>';
     d.onclick=()=>d.classList.toggle('checked');
     cl.appendChild(d);
   });
 }
 </script>
+
+<!-- MODAL CONFERMA TERMINAZIONE -->
+<div class="end-confirm-overlay" id="endConfirmOverlay">
+  <div class="end-confirm-box">
+    <div class="ecb-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <h3 class="ecb-title">Attenzione</h3>
+    <p class="ecb-text">Stai per concludere l'attivita'.<br>Sei sicuro che e' stato il <strong>prof. Cerioli</strong> a chiedertelo?</p>
+    <div class="ecb-buttons">
+      <button class="ecb-btn ecb-cancel" onclick="cancelEnd()">No, annulla e torna all'attivita'</button>
+      <button class="ecb-btn ecb-confirm" onclick="confirmEnd()">Si', sono sicuro e voglio vedere il mio feedback</button>
+    </div>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer class="site-footer">
   Scuola Sacra Famiglia &mdash; Orzinuovi (BS)<br>
