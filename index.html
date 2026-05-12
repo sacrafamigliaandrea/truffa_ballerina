@@ -1201,14 +1201,21 @@ function doSegnala(){
 // ═══ GLOSSARY POPUP ═══
 let glossCurrent=null;
 
-// Stemming italiano leggero: tronca suffissi piu' frequenti per accettare varianti
-// (dominio/domini/dominare → "domin"; verifica/verificare/verifichero' → "verific")
+// Stemming italiano con soglia minima di radice = 3 caratteri.
+// Se il taglio dei suffissi pesanti (-are, -ire, -ito, ecc.) producesse
+// una radice di lunghezza < 3, applichiamo solo lo stem leggero (vocale finale).
+// Esempi: "agire" → "agir" (non "ag"), "sito" → "sit" (non "s").
 function glossStem(parola){
-  return parola.toLowerCase()
+  parola = parola.toLowerCase()
     .replace(/[àáâ]/g,'a').replace(/[èé]/g,'e').replace(/[ìí]/g,'i')
-    .replace(/[òó]/g,'o').replace(/[ùú]/g,'u')
+    .replace(/[òó]/g,'o').replace(/[ùú]/g,'u');
+  const MIN_STEM=3;
+  const fullStem=parola
     .replace(/(zione|zioni|mento|menti|aggio|aggi|abile|abili|ibile|ibili|ata|ate|ato|ati|ita|ite|ito|iti|are|ere|ire|ano|ono|ate|ete|ite|oso|osa|osi|ose|ale|ali|ile|ili|ica|ico|ici|iche)$/,'')
     .replace(/(o|a|i|e)$/,'');
+  if(fullStem.length>=MIN_STEM) return fullStem;
+  const lightStem=parola.replace(/(o|a|i|e)$/,'');
+  return lightStem.length>=MIN_STEM ? lightStem : parola;
 }
 
 // Quali tag sono "accesi" dato il testo dell'utente
