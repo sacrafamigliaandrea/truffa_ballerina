@@ -14,14 +14,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 /* ═══ HEADER ═══ */
 .site-header{position:fixed;top:0;left:0;right:0;z-index:900;background:rgba(255,255,255,0.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;}
 .sh-brand{display:flex;align-items:center;gap:10px;}
-.sh-logo{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;}
-.sh-logo svg{width:18px;height:18px;fill:#fff;}
+.sh-logo{width:38px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.sh-logo img{width:100%;height:100%;object-fit:contain;display:block;}
 .sh-name{font-size:0.82rem;font-weight:700;color:var(--text);line-height:1.2;}
 .sh-sub{font-size:0.62rem;color:var(--muted);font-weight:400;}
-.sh-right{font-size:0.65rem;color:var(--muted);text-align:right;line-height:1.4;}
-
-/* ═══ FOOTER ═══ */
-.site-footer{text-align:center;padding:24px;font-size:0.68rem;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);background:var(--bg2);}
+.sh-right{display:flex;align-items:center;gap:14px;color:var(--muted);}
+.sh-right-info{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-size:0.65rem;line-height:1.35;text-align:right;}
+.sh-copy{font-size:0.58rem;opacity:0.7;letter-spacing:0.01em;}
+.sh-lock{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;padding:0;flex-shrink:0;}
+.sh-lock:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-1px);}
+.sh-lock:active{transform:translateY(0);}
+.sh-lock svg{width:13px;height:13px;}
+@media(max-width:720px){
+  .sh-right-info{font-size:0.6rem;}
+  .sh-copy{display:none;}
+}
 
 /* ═══ SCREENS ═══ */
 .page{display:none;height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px 12px;overflow:hidden;}
@@ -529,10 +536,18 @@ body.tb-locked{overflow:hidden;}
 <!-- HEADER -->
 <header class="site-header">
   <div class="sh-brand">
-    <div class="sh-logo"><svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5v7L12 19.82 4 15.5v-7L12 4.18z"/><path d="M12 8a3 3 0 100 6 3 3 0 000-6z"/></svg></div>
-    <div><div class="sh-name">Scuola Sacra Famiglia</div><div class="sh-sub">Percorso di Cittadinanza Digitale</div></div>
+    <div class="sh-logo"><img src="logo.jpg" alt="Logo Cittadinanza Digitale - Scuola Sacra Famiglia"></div>
+    <div><div class="sh-name">Scuola Sacra Famiglia</div><div class="sh-sub">Cittadinanza Digitale &middot; Orzinuovi (BS)</div></div>
   </div>
-  <div class="sh-right">Attivita' in laboratorio<br>con l'Animatore Digitale</div>
+  <div class="sh-right">
+    <div class="sh-right-info">
+      <div>Attivita' in laboratorio &middot; con l'Animatore Digitale</div>
+      <div class="sh-copy">&copy; A.S. 2025/2026 &middot; Tutti i diritti riservati</div>
+    </div>
+    <button class="sh-lock" onclick="openTeacherDashboard()" title="Accesso docente (Alt+D)" aria-label="Accesso docente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </button>
+  </div>
 </header>
 
 <div class="gloss-overlay" id="glossOverlay">
@@ -545,10 +560,10 @@ body.tb-locked{overflow:hidden;}
       <span>Concetti chiave da toccare</span>
       <span class="gtl-count"><strong id="gtCount">0</strong> di <span id="gtNeeded">3</span> usati</span>
     </div>
-    <div class="gloss-tags-hint">Mentre scrivi, le parole-tag qui sotto si accendono se le usi (o usi le loro forme). Devi accenderne almeno 3 per chiudere.</div>
+    <div class="gloss-tags-hint">Mentre scrivi, le parole-tag qui sotto si accendono se le usi (o usi le loro forme). Devi accenderle <strong>tutte</strong> per chiudere.</div>
     <div class="gloss-tags" id="gtTags"></div>
     <div class="gloss-footer">
-      <div class="gloss-hint" id="gtHint">Usa almeno 3 concetti chiave</div>
+      <div class="gloss-hint" id="gtHint">Riscrivi la definizione toccando tutti i concetti chiave</div>
       <button class="gloss-close locked" id="gtClose" onclick="closeGloss()">Ho capito</button>
     </div>
   </div>
@@ -1110,38 +1125,111 @@ function doSegnala(){
 
 // ═══ GLOSSARY POPUP ═══
 let glossCurrent=null;
+
+// Stemming italiano leggero: tronca suffissi piu' frequenti per accettare varianti
+// (dominio/domini/dominare → "domin"; verifica/verificare/verifichero' → "verific")
+function glossStem(parola){
+  return parola.toLowerCase()
+    .replace(/[àáâ]/g,'a').replace(/[èé]/g,'e').replace(/[ìí]/g,'i')
+    .replace(/[òó]/g,'o').replace(/[ùú]/g,'u')
+    .replace(/(zione|zioni|mento|menti|aggio|aggi|abile|abili|ibile|ibili|ata|ate|ato|ati|ita|ite|ito|iti|are|ere|ire|ano|ono|ate|ete|ite|oso|osa|osi|ose|ale|ali|ile|ili|ica|ico|ici|iche)$/,'')
+    .replace(/(o|a|i|e)$/,'');
+}
+
+// Quali tag sono "accesi" dato il testo dell'utente
+function glossTagsAccesi(testo,tags){
+  const parole=testo.toLowerCase()
+    .split(/[\s,.;:!?'"()\-–—]+/)
+    .filter(p=>p.length>=3)
+    .map(glossStem);
+  const set=new Set(parole);
+  return tags.filter(t=>{
+    const r=glossStem(t);
+    if(r.length<3) return false;
+    // match per radice in entrambe le direzioni
+    for(const p of set){ if(p.startsWith(r)||r.startsWith(p)) return true; }
+    return false;
+  });
+}
+
 function openGloss(sid){
   glossCurrent=sid;
   const sk=SKILLS.find(x=>x.id===sid);
   if(!sk)return;
+  const g=GLOSSARY[sid];
+  if(!g)return;
   document.getElementById('gtBadge').textContent=sid.substring(0,2).toUpperCase();
   document.getElementById('gtBadge').style.background=sk.color;
   document.getElementById('gtName').textContent=sk.name;
-  document.getElementById('gtDef').textContent=GLOSSARY[sid]||'';
+  document.getElementById('gtDef').textContent=g.def;
   document.getElementById('gtInput').value=glossUnderstood[sid]||'';
+  // Render dei chip canonici (era il bug principale: container vuoto)
+  const cont=document.getElementById('gtTags');
+  cont.innerHTML=g.tags.map(t=>'<span class="gtag" data-tag="'+t+'">'+t+'</span>').join('');
+  document.getElementById('gtNeeded').textContent=g.tags.length;
   checkGlossInput();
   document.getElementById('glossOverlay').classList.add('open');
   document.getElementById('gtInput').focus();
 }
+
 function checkGlossInput(){
+  if(!glossCurrent) return false;
+  const g=GLOSSARY[glossCurrent];
   const v=document.getElementById('gtInput').value.trim();
-  const ok=v.length>=15;
+  const tags=g.tags;
+  const accesi=glossTagsAccesi(v,tags);
+
+  // Accendi/spegni i chip
+  document.querySelectorAll('#gtTags .gtag').forEach(el=>{
+    el.classList.toggle('active',accesi.includes(el.dataset.tag));
+  });
+  document.getElementById('gtCount').textContent=accesi.length;
+
+  // Soglie di validita': lunghezza minima, parole distinte, TUTTI i tag accesi
+  const paroleDistinte=new Set(
+    v.toLowerCase().split(/[\s,.;:!?'"()\-–—]+/).filter(p=>p.length>=3).map(glossStem)
+  ).size;
+  const minChars=25;
+  const minParole=6;
+  const lenOk=v.length>=minChars;
+  const paroleOk=paroleDistinte>=minParole;
+  const tagOk=accesi.length===tags.length;
+
   const btn=document.getElementById('gtClose');
-  btn.className='gloss-close '+(ok?'unlocked':'locked');
   const hint=document.getElementById('gtHint');
-  if(ok){hint.textContent='Ottimo! Puoi chiudere.';hint.className='gloss-hint';}
-  else{hint.textContent='Scrivi almeno '+(15-v.length)+' caratteri';hint.className='gloss-hint warn';}
+  const allOk=lenOk && paroleOk && tagOk;
+  btn.className='gloss-close '+(allOk?'unlocked':'locked');
+
+  // Feedback diagnostico chiaro su cosa manca (senza colore rosso)
+  if(!lenOk){
+    hint.textContent='Scrivi almeno '+(minChars-v.length)+' caratteri';
+    hint.className='gloss-hint warn';
+  } else if(!paroleOk){
+    hint.textContent='Usa piu\' parole diverse ('+paroleDistinte+'/'+minParole+')';
+    hint.className='gloss-hint warn';
+  } else if(!tagOk){
+    const mancanti=tags.length-accesi.length;
+    hint.textContent='Devi ancora toccare '+mancanti+' concett'+(mancanti===1?'o':'i')+' chiave';
+    hint.className='gloss-hint warn';
+  } else {
+    hint.textContent='Ottimo! Hai toccato tutti i concetti chiave: puoi chiudere.';
+    hint.className='gloss-hint';
+  }
+  return allOk;
 }
+
 function closeGloss(){
+  if(!checkGlossInput()) return; // gate semantico: niente nonsense, niente chiusura
   const v=document.getElementById('gtInput').value.trim();
-  if(v.length<15)return;
+  const g=GLOSSARY[glossCurrent];
+  const accesi=glossTagsAccesi(v,g.tags);
   glossUnderstood[glossCurrent]=v;
-  // Telemetria glossario
+  // Telemetria glossario (ora con tag effettivamente toccati)
   tlog('gloss',{
     sid:tbSessionId, nome:tbName, classe:tbClass,
     skill:glossCurrent,
     text:v.substr(0,400),
-    tags:'', ntags:0
+    tags:accesi.join('|'), ntags:accesi.length
   });
   document.getElementById('glossOverlay').classList.remove('open');
   // Mark skill as understood
@@ -1188,14 +1276,22 @@ const SKILLS=[
   {id:'aut',name:'Messaggi autentici',color:'#1a7a5a',max:0,pts:0},
 ];
 const GLOSSARY={
-  dom:"L'indirizzo del sito web (come baldancig.top o ch3ck-foto.me). Se il nome e' strano, inventato, ha numeri al posto delle lettere o usa estensioni insolite (.top, .xyz, .click), quasi certamente e' un sito falso creato apposta per truffarti.",
-  emo:"Tecnica che usa i tuoi sentimenti per farti agire senza pensare. Compassione ('e\' per una bambina!'), senso di colpa ('sarebbe davvero importante per lei'), paura ('perderemo!'). Il truffatore vuole che tu agisca col cuore, non con la testa.",
-  cod:"I codici segreti come quello a 6 cifre di WhatsApp servono a proteggere il TUO account. Se qualcuno te li chiede, vuole impossessarsi del tuo profilo. Non vanno MAI condivisi con nessuno, nemmeno con familiari.",
-  urg:"Quando un messaggio ti mette fretta ('subito!', 'scade tra 1 ora!', 'entro stasera!') serve a impedirti di riflettere. Le situazioni reali raramente richiedono azioni istantanee via messaggio.",
-  lnk:"Indirizzi web (URL) che portano a siti falsi che imitano quelli veri. Si riconoscono da nomi inventati, estensioni insolite e errori di scrittura. Un link sicuro ha un dominio riconoscibile (es: whatsapp.com, google.com).",
-  den:"Quando qualcuno ti chiede soldi o pagamenti via messaggio. Anche se sembra un amico o parente in emergenza, potrebbe essere un truffatore che ha rubato il suo account. Regola d'oro: CHIAMA sempre prima di inviare denaro.",
-  ver:"Controllare se chi ti scrive e' davvero chi dice di essere. Il numero puo' essere quello giusto ma l'account potrebbe essere stato rubato. Il modo migliore per verificare: fare una telefonata vocale.",
-  aut:"Messaggi veri da persone reali. Li riconosci perche' non hanno link strani, non chiedono codici ne' soldi, non mettono fretta artificiale, e il contenuto e' coerente con quella persona e quel contesto.",
+  dom:{def:"L'indirizzo del sito web (come baldancig.top o ch3ck-foto.me). Se il nome e' strano, inventato, ha numeri al posto delle lettere o usa estensioni insolite (.top, .xyz, .click), quasi certamente e' un sito falso creato apposta per truffarti.",
+       tags:['dominio','estensione','indirizzo','falso','numeri']},
+  emo:{def:"Tecnica che usa i tuoi sentimenti per farti agire senza pensare. Compassione ('e\' per una bambina!'), senso di colpa ('sarebbe davvero importante per lei'), paura ('perderemo!'). Il truffatore vuole che tu agisca col cuore, non con la testa.",
+       tags:['sentimenti','compassione','paura','agire','riflettere']},
+  cod:{def:"I codici segreti come quello a 6 cifre di WhatsApp servono a proteggere il TUO account. Se qualcuno te li chiede, vuole impossessarsi del tuo profilo. Non vanno MAI condivisi con nessuno, nemmeno con familiari.",
+       tags:['codice','cifre','account','condividere','segreto']},
+  urg:{def:"Quando un messaggio ti mette fretta ('subito!', 'scade tra 1 ora!', 'entro stasera!') serve a impedirti di riflettere. Le situazioni reali raramente richiedono azioni istantanee via messaggio.",
+       tags:['fretta','subito','scadenza','riflettere','tempo']},
+  lnk:{def:"Indirizzi web (URL) che portano a siti falsi che imitano quelli veri. Si riconoscono da nomi inventati, estensioni insolite e errori di scrittura. Un link sicuro ha un dominio riconoscibile (es: whatsapp.com, google.com).",
+       tags:['link','sito','falso','dominio','imitare']},
+  den:{def:"Quando qualcuno ti chiede soldi o pagamenti via messaggio. Anche se sembra un amico o parente in emergenza, potrebbe essere un truffatore che ha rubato il suo account. Regola d'oro: CHIAMA sempre prima di inviare denaro.",
+       tags:['soldi','pagamento','chiamare','emergenza','verificare']},
+  ver:{def:"Controllare se chi ti scrive e' davvero chi dice di essere. Il numero puo' essere quello giusto ma l'account potrebbe essere stato rubato. Il modo migliore per verificare: fare una telefonata vocale.",
+       tags:['verificare','identita','account','telefonata','controllare']},
+  aut:{def:"Messaggi veri da persone reali. Li riconosci perche' non hanno link strani, non chiedono codici ne' soldi, non mettono fretta artificiale, e il contenuto e' coerente con quella persona e quel contesto.",
+       tags:['autentico','reale','coerente','contesto','normale']},
 };
 let glossUnderstood={};
 // Map scenario type keywords to skills + classification
@@ -1559,7 +1655,31 @@ document.addEventListener('keydown',function(e){
   else if(e.key==='Enter')confirmEnd();
 });
 
-// ═══ METACOGNITION ═══
+// ═══ ACCESSO DOCENTE DASHBOARD ═══
+// URL configurabile: relativo se sta nella stessa Vercel, altrimenti URL pieno.
+// Esempi compatibili con il pattern degli altri progetti:
+//   './dashboard.html'  oppure  'https://truffa-ballerina-dashboard.vercel.app'
+const TEACHER_DASHBOARD_URL='./dashboard.html';
+
+function openTeacherDashboard(){
+  // Apre in nuova tab cosi' lo studente non perde lo stato della sim
+  const w=window.open(TEACHER_DASHBOARD_URL,'_blank','noopener,noreferrer');
+  if(!w){
+    // popup blocker: fallback nella stessa tab con conferma
+    if(confirm('Il browser ha bloccato l\'apertura in una nuova scheda. Vuoi aprire la dashboard in questa scheda? (la sessione studente verra\' interrotta)')){
+      location.href=TEACHER_DASHBOARD_URL;
+    }
+  }
+}
+
+// Scorciatoia tastiera Alt+D (riservata al docente)
+document.addEventListener('keydown',function(e){
+  if(e.altKey && (e.key==='d'||e.key==='D') && !e.ctrlKey && !e.metaKey){
+    e.preventDefault();
+    openTeacherDashboard();
+  }
+});
+
 const COMPETENCES=[
   "So riconoscere un dominio sospetto in un link (lettere sostituite con numeri, estensioni strane)",
   "Capisco che un messaggio da un contatto fidato puo' essere stato inviato da un truffatore",
@@ -1649,11 +1769,5 @@ function showMeta(){
   </div>
 </div>
 
-<!-- FOOTER -->
-<footer class="site-footer">
-  Scuola Sacra Famiglia &mdash; Orzinuovi (BS)<br>
-  Percorso di Cittadinanza Digitale &mdash; A.S. 2025/2026<br>
-  &copy; Tutti i diritti riservati. Vietata la riproduzione senza autorizzazione.
-</footer>
 </body>
 </html>
