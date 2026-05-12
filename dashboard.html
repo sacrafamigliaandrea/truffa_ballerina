@@ -203,7 +203,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       </div>
     </div>
     <div class="tb-right">
-      <div class="tb-meta">
+      <div class="tb-meta" onclick="showRawData()" style="cursor:pointer" title="Click per vedere i dati grezzi dal Foglio">
         <strong id="metaCount">—</strong> eventi caricati<br>
         <span id="metaTime">—</span>
       </div>
@@ -376,7 +376,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 // ═══════════════════════════════════════════════════════════════
 // 1. AUTH AES-256-GCM (pattern Andrea, PBKDF2 250k SHA-256)
 // ═══════════════════════════════════════════════════════════════
-const PAYLOAD_B64='N+wcRx5a7PM/84mi1sd1rhs12JSXRcx407HALcTHoqOFr8L9DghRBlb5FTXoA+gUfJVSCSLSIAcl6LYdGvtEY1HcA6Ju1G3re0Gl7IFSGJaIbqzQTPpd3XylxCb5PofMUG/SR0UqK2qwLlh9BtDfafuOpiYNXMZDED6C1daMH5nXyaz/kxxIkLEZhT9ML8yB3jQk+g2yBN9aee627MMu1rxaekD5he7P/wfM/uT5bGVL9sqlE4ftP2FJ64ojylbyHLSECW0o';
+const PAYLOAD_B64='cgT4ZzMcYmOMOW5IKSk1bt/JzHidI/f8cCJrF2i5XQtsBuRe8e78nbZeSgMziGKNVhgjVGe/nuAtX9Li001tws1Vk0pGOMph2LOUBNyJZfPbnkkl8Ot9ZTArN2oJka5kI9Qf7VAaGi64MlDswW+fVIWZtp9Va3mv46Ip4daCaHK5LOWeITH5XHUkrgPulYSTlmtnZxyh79/Dcn6itGfoC+sxkU+o7FqUxCh+yHP1hcf2KWjyly1Hl072ytkgw9V1kkbBp1YX';
 const PBKDF2_ITER=250000;
 let CFG=null; // {url, token} dopo il login
 
@@ -546,6 +546,27 @@ async function loadData(){
 
 function refreshData(){ loadData(); }
 
+function showRawData(){
+  if(!RAW || !RAW.rows){ alert('Nessun dato caricato.'); return; }
+  const headers = RAW.headers||[];
+  const sample = (RAW.rows||[]).slice(0, 8);
+  const html =
+    '<div style="position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:30px" onclick="if(event.target===this)this.remove()">'+
+      '<div style="background:#fff;max-width:1100px;width:100%;max-height:88vh;overflow:auto;border-radius:12px;padding:24px;font-family:var(--mono);font-size:0.78rem">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--font)"><h3 style="font-size:1rem;font-weight:700;color:var(--accent)">Diagnostica · dati grezzi dal Foglio</h3><button class="tb-btn" onclick="this.closest(\'[style*=fixed]\').remove()">Chiudi</button></div>'+
+        '<div style="margin-bottom:14px;font-family:var(--font);font-size:0.82rem;color:var(--muted)">Foglio: <strong style="color:var(--text)">'+escapeHtml(RAW.sheet||'?')+'</strong> &middot; '+headers.length+' colonne &middot; '+(RAW.total||0)+' righe totali &middot; '+(RAW.returned||0)+' lette</div>'+
+        '<div style="font-family:var(--font);font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">Colonne (headers)</div>'+
+        '<div style="background:var(--bg);padding:10px 12px;border-radius:6px;margin-bottom:18px;line-height:1.7;font-size:0.74rem">'+headers.map((h,i)=>'<span style="display:inline-block;background:#fff;padding:2px 8px;border-radius:4px;margin:2px 2px 2px 0;border:1px solid var(--border)"><strong>'+i+'</strong> '+escapeHtml(h)+'</span>').join('')+'</div>'+
+        '<div style="font-family:var(--font);font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">Prime 8 righe (raw JSON)</div>'+
+        '<pre style="background:#1e1e2e;color:#a8e6cf;padding:14px 16px;border-radius:6px;overflow:auto;max-height:50vh;font-size:0.72rem;line-height:1.5">'+escapeHtml(JSON.stringify(sample, null, 2))+'</pre>'+
+        '<div style="font-family:var(--font);font-size:0.78rem;color:var(--muted);margin-top:14px;line-height:1.5"><strong>Cosa controllare:</strong> i nomi degli headers devono includere almeno <code>timestamp</code>, <code>action</code>, <code>sid</code>, <code>nome</code>, <code>classe</code>. Se vedi colonne con nomi diversi (es. <code>data</code>, <code>user</code>, ecc.) il foglio ha uno schema differente da quello che la dashboard si aspetta.</div>'+
+      '</div>'+
+    '</div>';
+  const div=document.createElement('div');
+  div.innerHTML=html;
+  document.body.appendChild(div.firstElementChild);
+}
+
 // Aggregazione eventi per sessione (sid)
 function buildSessions(){
   const bySid={};
@@ -712,7 +733,7 @@ function renderTable(){
       '</tr>';
     }).join('');
   }
-  document.getElementById('sessCount').textContent=' &middot; '+FILTERED.length+' totali';
+  document.getElementById('sessCount').textContent=' · '+FILTERED.length+' totali';
   document.querySelectorAll('#sessTable th[data-sort]').forEach(th=>{
     th.classList.toggle('sorted',th.dataset.sort===SORT.col);
     th.classList.toggle('asc',th.dataset.sort===SORT.col && SORT.dir==='asc');
