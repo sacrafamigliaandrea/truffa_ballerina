@@ -34,18 +34,41 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .page{display:none;height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px 12px;overflow:hidden;}
 .page.active{display:flex;}
 
-/* ═══ PAGE 1: VIDEO ═══ */
+/* ═══ PAGE 1: VIDEO + CONSEGNA ═══ */
 #pgVideo{background:var(--bg);}
-.vid-wrap{max-width:380px;width:100%;text-align:center;}
-.vid-badge{display:inline-block;padding:5px 14px;border-radius:20px;background:var(--accent-light);border:1px solid rgba(26,122,90,0.2);font-size:0.72rem;font-weight:600;color:var(--accent);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;}
-.vid-title{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;line-height:1.1;margin-bottom:12px;color:var(--text);}
-.vid-sub{font-size:0.9rem;color:var(--muted);line-height:1.6;margin-bottom:24px;}
-.vid-frame{width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.12);border:1px solid var(--border);margin-bottom:28px;background:#000;}
+#pgVideo.page{justify-content:flex-start;padding:74px 24px 20px;}
+.intro-grid{max-width:1280px;width:100%;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:36px;align-items:start;height:100%;}
+.intro-left{display:flex;flex-direction:column;min-width:0;height:100%;overflow-y:auto;padding-right:6px;}
+.intro-left::-webkit-scrollbar{width:4px;}
+.intro-left::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.08);border-radius:2px;}
+.vid-badge{display:inline-block;padding:5px 14px;border-radius:20px;background:var(--accent-light);border:1px solid rgba(26,122,90,0.2);font-size:0.72rem;font-weight:600;color:var(--accent);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px;align-self:flex-start;}
+.vid-title{font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:700;line-height:1.05;margin-bottom:10px;color:var(--text);}
+.vid-lead{font-size:0.95rem;color:var(--muted);line-height:1.55;margin-bottom:20px;max-width:580px;}
+.intro-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:22px;}
+.istep{display:grid;grid-template-columns:38px 1fr;gap:14px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:11px;transition:border-color .25s;}
+.istep:hover{border-color:rgba(26,122,90,0.3);}
+.istep-num{width:34px;height:34px;border-radius:9px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.istep-num svg{width:17px;height:17px;}
+.istep-body h3{font-size:0.92rem;font-weight:700;margin-bottom:4px;color:var(--text);letter-spacing:-0.01em;}
+.istep-body p{font-size:0.82rem;line-height:1.55;color:var(--muted);}
+.istep-body p strong{color:var(--text);font-weight:600;}
+.istep-body p em{font-style:normal;color:var(--accent);font-weight:600;}
+.intro-cta-wrap{display:flex;align-items:center;gap:14px;padding-top:6px;margin-top:auto;}
+.intro-cta-hint{font-size:0.74rem;color:var(--muted);font-style:italic;}
+.intro-right{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-width:0;}
+.vid-frame{width:100%;max-width:380px;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.12);border:1px solid var(--border);background:#000;}
 .vid-frame iframe{width:100%;aspect-ratio:9/16;display:block;border:none;}
+.vid-caption{font-size:0.72rem;color:var(--muted);text-align:center;margin-top:10px;font-style:italic;line-height:1.4;}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border:none;border-radius:12px;font-family:var(--font);font-size:0.95rem;font-weight:600;cursor:pointer;transition:all .25s;}
 .btn-accent{background:var(--accent);color:#fff;}
 .btn-accent:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,122,90,0.2);}
 .btn svg{width:18px;height:18px;}
+@media (max-width:900px){
+  #pgVideo.page{justify-content:center;}
+  .intro-grid{grid-template-columns:1fr;gap:24px;height:auto;}
+  .intro-left{overflow-y:visible;}
+  .intro-right{order:-1;}
+}
 
 /* ═══ PAGE 2: ANALYSIS ═══ */
 #pgExamples{background:var(--bg);}
@@ -571,15 +594,67 @@ body.tb-locked{overflow:hidden;}
 
 <div class="lb" id="lb" onclick="this.classList.remove('open')"><button class="lb-x"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button><img id="lbi" src=""></div>
 
-<!-- PAGE 1: VIDEO -->
+<!-- PAGE 1: VIDEO + CONSEGNA -->
 <div class="page active" id="pgVideo">
-<div class="vid-wrap">
-<div class="vid-badge">Cittadinanza Digitale / 2026</div>
-<h1 class="vid-title">Il Voto che <span style="color:var(--danger)">Ruba</span></h1>
-<p class="vid-sub">Guarda questo video con attenzione. Alla fine, ti chiederemo di mettere alla prova il tuo fiuto.</p>
-<div class="vid-frame"><iframe src="https://www.youtube.com/embed/qlW5tzIATTE?rel=0&playsinline=1&modestbranding=1&enablejsapi=1" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
-<button class="btn btn-accent" onclick="go('pgChain')">Ho visto il video <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-</div>
+  <div class="intro-grid">
+
+    <!-- COLONNA SINISTRA: CONSEGNA -->
+    <div class="intro-left">
+      <div class="vid-badge">Cittadinanza Digitale &middot; A.S. 2025/2026</div>
+      <h1 class="vid-title">Il Voto che <span style="color:var(--danger)">Ruba</span></h1>
+      <p class="vid-lead">Una truffa che gira davvero su WhatsApp: arriva da un amico, parla di una bambina da votare, e in pochi secondi ti svuota l'account. Oggi impari a riconoscerla prima che ti freghi.</p>
+
+      <div class="intro-steps">
+
+        <div class="istep">
+          <div class="istep-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div class="istep-body">
+            <h3>Cos'e' la "truffa della ballerina"</h3>
+            <p>Un contatto che <strong>conosci davvero</strong> ti scrive: <em>"vota per favore la mia nipotina al concorso, e' importante per lei"</em>. Il link che ti manda non porta a un sito di voto: ti chiede il codice a 6 cifre di WhatsApp. Lo dai, e il truffatore entra nel tuo account &mdash; poi scrive ai <strong>tuoi</strong> contatti con la stessa storia. Funziona perche' sfrutta tre leve: <em>fiducia</em>, <em>compassione</em>, <em>urgenza</em>.</p>
+          </div>
+        </div>
+
+        <div class="istep">
+          <div class="istep-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+          <div class="istep-body">
+            <h3>Cosa vedrai adesso</h3>
+            <p>Un servizio del <strong>TG2000</strong> di pochi minuti che racconta come e' nata, come si propaga e quante persone ha colpito. Non e' allarmismo: e' cronaca. Guardalo con attenzione &mdash; molti dettagli ti serviranno dopo.</p>
+          </div>
+        </div>
+
+        <div class="istep">
+          <div class="istep-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div class="istep-body">
+            <h3>Cosa farai nella web app</h3>
+            <p>Tre tappe progressive: <em>(1)</em> <strong>ricostruisci la sequenza</strong> del furto trascinando in ordine le tessere; <em>(2)</em> <strong>analizzi 50 messaggi</strong> WhatsApp arrivati a vittime reali, alcuni autentici, altri trappola: per ognuno decidi se fidarti o no; <em>(3)</em> ad ogni dubbio puoi aprire il <strong>glossario</strong> e riformulare con parole tue gli 8 concetti chiave (domini sospetti, leva emotiva, codici, urgenza, link, denaro, verifica del mittente, messaggi autentici).</p>
+          </div>
+        </div>
+
+        <div class="istep">
+          <div class="istep-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div class="istep-body">
+            <h3>Il feedback che riceverai</h3>
+            <p>Alla fine l'app calcola il tuo <strong>livello di attenzione</strong> (da <em>Critico</em> a <em>Eccellente</em>) basandosi sulla percentuale di messaggi classificati correttamente, con un commento scritto. Poi una <strong>scheda metacognitiva</strong> con 10 competenze: spunta solo quelle che senti davvero di aver capito. Il punteggio non finisce in pagella &mdash; serve a te e al debrief in classe.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="intro-cta-wrap">
+        <button class="btn btn-accent" onclick="go('pgChain')">Ho visto il video, comincio
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <span class="intro-cta-hint">Clicca quando hai finito di guardare</span>
+      </div>
+    </div>
+
+    <!-- COLONNA DESTRA: VIDEO -->
+    <div class="intro-right">
+      <div class="vid-frame"><iframe src="https://www.youtube.com/embed/qlW5tzIATTE?rel=0&playsinline=1&modestbranding=1&enablejsapi=1" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe></div>
+      <div class="vid-caption">Servizio TG2000 &middot; "Truffa della ballerina" su WhatsApp</div>
+    </div>
+
+  </div>
 </div>
 
 <!-- PAGE: CHAIN (sequenza cronologica del furto) -->
@@ -1662,6 +1737,13 @@ document.addEventListener('keydown',function(e){
 const TEACHER_DASHBOARD_URL='./dashboard.html';
 
 function openTeacherDashboard(){
+  // Traccia l'apertura (Image-pixel GET, fail-silent)
+  tlog('dashboard_open',{
+    sid:tbSessionId||'(no-session)',
+    nome:tbName||'(anon)',
+    classe:tbClass||'',
+    from:'index'
+  });
   // Apre in nuova tab cosi' lo studente non perde lo stato della sim
   const w=window.open(TEACHER_DASHBOARD_URL,'_blank','noopener,noreferrer');
   if(!w){
